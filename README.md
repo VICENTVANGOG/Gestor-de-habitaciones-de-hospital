@@ -188,11 +188,13 @@ Paso	Acción	Resultado esperado
 5	Registrar la salida del paciente 1001.	Habitación liberada.
 6	Consultar el historial de la habitación 8.	Aparecen el ingreso y la salida.
 7	Intentar dar salida nuevamente al paciente 1001.	El sistema rechaza la operación por no existir una hospitalización activa.
+
 ⚠️ 12. Restricciones y consideraciones
 Persistencia en memoria: los registros existen únicamente mientras el programa está en ejecución. Al cerrarlo, los datos se pierden.
 Triage académico: los niveles de triage se almacenan como datos de ejemplo. La asignación de habitaciones es manual y no depende del nivel de triage.
 Proyecto educativo: está diseñado para practicar estructuras de datos y programación orientada a objetos. No debe utilizarse como sistema clínico real.
 Alcance limitado: no incluye interfaz gráfica, autenticación de usuarios, base de datos ni asignación automática de habitaciones.
+
 📚 13. Tecnologías utilizadas
 Java.
 Programación orientada a objetos.
@@ -200,6 +202,8 @@ Listas simplemente enlazadas implementadas manualmente.
 Matriz dispersa mediante tripletas.
 Apache NetBeans.
 JDK de Java.
+
+
 📦 14. Entregables del desarrollo
 
 El desarrollo del proyecto contempla los siguientes entregables:
@@ -210,6 +214,8 @@ Desarrollo organizado por sprints.
 Producto mínimo viable (MVP).
 Código fuente disponible en el repositorio.
 Mantenimiento, soporte y documentación posterior.
+
+
 📖 15. Referencias
 IEEE. (1998). IEEE recommended practice for software requirements specifications (IEEE Std 830-1998). Institute of Electrical and Electronics Engineers.
 ISO/IEC/IEEE. (2018). Systems and software engineering — Life cycle processes — Requirements engineering (ISO/IEC/IEEE 29148:2018). International Organization for Standardization.
