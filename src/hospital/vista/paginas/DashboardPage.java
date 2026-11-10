@@ -44,7 +44,7 @@ public class DashboardPage extends JPanel {
         JPanel introText=new JPanel();introText.setOpaque(false);introText.setLayout(new BoxLayout(introText,BoxLayout.Y_AXIS));
         JLabel eyebrow=new JLabel("●  "+LocalDate.now().format(DATE).toUpperCase(new Locale("es","CO"))+"  ·  RESUMEN DEL DÍA");
         eyebrow.setFont(new Font(UiColors.FONT,Font.BOLD,9));eyebrow.setForeground(UiColors.PRIMARY);
-        JLabel title=new JLabel(greeting()+", equipo clínico");
+        JLabel title=new JLabel(greeting()+", equipo");
         title.setFont(new Font(UiColors.FONT,Font.BOLD,25));title.setForeground(UiColors.INK);
         JLabel subtitle=new JLabel("Todo lo importante de tu centro hospitalario, en un solo lugar.");
         subtitle.setFont(new Font(UiColors.FONT,Font.PLAIN,11));subtitle.setForeground(UiColors.MUTED);
@@ -112,6 +112,11 @@ public class DashboardPage extends JPanel {
         page.addComponentListener(new java.awt.event.ComponentAdapter(){
             @Override public void componentResized(java.awt.event.ComponentEvent e){
                 int width=page.getWidth();
+                page.setBorder(new EmptyBorder(18, width < 520 ? 14 : 26, 22, width < 520 ? 14 : 26));
+                eyebrow.setText(width < 520 ? "●  RESUMEN DEL DÍA" : "●  "+LocalDate.now().format(DATE).toUpperCase(new Locale("es","CO"))+"  ·  RESUMEN DEL DÍA");
+                title.setFont(new Font(UiColors.FONT, Font.BOLD, width < 520 ? 21 : 25));
+                dateChip.setVisible(width >= 520);
+                subtitle.setText(width < 520 ? "<html>Todo lo importante de tu centro hospitalario,<br>en un solo lugar.</html>" : "Todo lo importante de tu centro hospitalario, en un solo lugar.");
                 metrics.adapt(width);middle.adapt(width);lower.adapt(width);
             }
         });
