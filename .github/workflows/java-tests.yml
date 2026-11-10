@@ -17,3 +17,22 @@ jobs:
           cache: maven
       - name: Run tests
         run: mvn --batch-mode test
+      - name: Install virtual display
+        run: sudo apt-get update && sudo apt-get install -y xvfb imagemagick
+      - name: Render desktop and mobile previews
+        run: |
+          mvn --batch-mode test-compile
+          xvfb-run -a java -cp target/classes:target/test-classes hospital.UiPreview
+          echo "DESKTOP_PREVIEW_BEGIN"
+          convert target/ui-previews/dashboard-desktop.png -resize 480x320 -quality 28 jpg:- | base64 -w0
+          echo
+          echo "DESKTOP_PREVIEW_END"
+          echo "MOBILE_PREVIEW_BEGIN"
+          convert target/ui-previews/dashboard-mobile.png -resize 240x520 -quality 28 jpg:- | base64 -w0
+          echo
+          echo "MOBILE_PREVIEW_END"
+      - name: Upload UI previews
+        uses: actions/upload-artifact@v4
+        with:
+          name: hospitalize-ui-previews
+          path: target/ui-previews/*.png
