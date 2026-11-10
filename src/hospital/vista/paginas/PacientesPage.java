@@ -147,7 +147,7 @@ public class PacientesPage extends JPanel {
             String text=(p.getIdentificacion()+" "+p.getNombre()+" "+p.getMotivoIngreso()+" "+p.getNivelTriage()).toLowerCase();
             if(q.isEmpty()||text.contains(q))filteredPatients.add(p);
         }
-        int pages=Math.max(1,(filteredPatients.size()+PAGE_SIZE-1)/PAGE_SIZE);currentPage=Math.min(currentPage,pages-1);
+        int pages=Math.max(1,(filteredPatients.size()+pageSize()-1)/pageSize());currentPage=Math.min(currentPage,pages-1);
         count.setText(filteredPatients.size()+(filteredPatients.size()==1?" paciente encontrado":" pacientes encontrados"));
         model.setRowCount(0);int from=currentPage*pageSize(),to=Math.min(from+pageSize(),filteredPatients.size());
         for(int i=from;i<to;i++){Paciente p=filteredPatients.get(i);model.addRow(new Object[]{p.getIdentificacion(),p.getNombre(),p.getEdad(),p.getNivelTriage(),p.getMotivoIngreso()});}

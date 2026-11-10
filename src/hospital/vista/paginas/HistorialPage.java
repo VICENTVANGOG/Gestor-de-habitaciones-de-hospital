@@ -121,7 +121,7 @@ public class HistorialPage extends JPanel {
     private void rebuildFilteredRecords(){
         String q=search.getText().trim().toLowerCase();filteredRecords.clear();List<RegistroHistorial> records=controller.historial();
         for(int i=records.size()-1;i>=0;i--){RegistroHistorial r=records.get(i);String searchable=(r.getNombrePaciente()+" "+r.getIdentificacionPaciente()+" "+r.getAccion()+" "+r.getNumeroHabitacion()).toLowerCase();if(q.isEmpty()||searchable.contains(q))filteredRecords.add(r);}
-        int pages=Math.max(1,(filteredRecords.size()+PAGE_SIZE-1)/PAGE_SIZE);currentPage=Math.min(currentPage,pages-1);count.setText(filteredRecords.size()+" movimientos encontrados");
+        int pages=Math.max(1,(filteredRecords.size()+pageSize()-1)/pageSize());currentPage=Math.min(currentPage,pages-1);count.setText(filteredRecords.size()+" movimientos encontrados");
         model.setRowCount(0);int from=currentPage*pageSize(),to=Math.min(from+pageSize(),filteredRecords.size());
         for(int i=from;i<to;i++){RegistroHistorial r=filteredRecords.get(i);model.addRow(new Object[]{r.getFechaHora().format(FORMAT),r.getAccion(),"Habitación "+r.getNumeroHabitacion(),r.getNombrePaciente(),r.getIdentificacionPaciente()});}
         refreshMobile();updatePagination();
