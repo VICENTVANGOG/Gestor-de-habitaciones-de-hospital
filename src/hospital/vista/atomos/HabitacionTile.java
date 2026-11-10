@@ -20,8 +20,7 @@ public class HabitacionTile extends JButton {
         JLabel number=new JLabel(String.format("%02d",habitacion.getNumero()));
         number.setFont(new Font(UiColors.FONT,Font.BOLD,21));
         number.setForeground(habitacion.isOcupada()?UiColors.DANGER:UiColors.INK);
-        JLabel bed=new JLabel("▰");bed.setFont(new Font(UiColors.FONT,Font.BOLD,12));
-        bed.setForeground(habitacion.isOcupada()?UiColors.DANGER:UiColors.TEAL);
+        JLabel bed=new JLabel(new UiIcon("bed",habitacion.isOcupada()?UiColors.DANGER:UiColors.TEAL,17));
         top.add(number,BorderLayout.WEST);top.add(bed,BorderLayout.EAST);
 
         JLabel status=new JLabel(habitacion.isOcupada()?"● OCUPADA":"● DISPONIBLE");

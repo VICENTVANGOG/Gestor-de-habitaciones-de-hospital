@@ -17,7 +17,7 @@ public final class UiIcon implements Icon {
         g.setColor(color);g.setStroke(new BasicStroke(1.65f,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));g.scale(size/20.0,size/20.0);
         switch(type){
             case "dashboard" -> {Path2D p=new Path2D.Double();p.moveTo(2.5,9);p.lineTo(10,2.7);p.lineTo(17.5,9);g.draw(p);g.drawRoundRect(5,8,10,9,2,2);g.drawLine(9,17,9,12);g.drawLine(11,17,11,12);}
-            case "pacientes" -> {g.drawOval(7,2.8,6,6);g.drawArc(3.8,10,12.4,9,0,180);g.drawArc(1.5,12,17,7,0,180);}
+            case "pacientes" -> {g.drawOval(7,2.8,6,6);g.drawArc(3.8,10,12.4,9,0,180);g.drawArc(2,12,17,7,0,180);}
             case "habitaciones" -> {g.drawRoundRect(2.5,6,15,9,2,2);g.drawLine(2.5,11,17.5,11);g.drawRoundRect(4,7,5,3,1,1);g.drawLine(4,15,4,17.5);g.drawLine(16,15,16,17.5);}
             case "historial" -> {g.drawOval(2.5,2.5,15,15);g.drawLine(10,5.5,10,10);g.drawLine(10,10,14,12.5);g.drawLine(2,5,5,5);}
             case "search" -> {g.drawOval(2.5,2.5,11,11);g.drawLine(12,12,18,18);}
