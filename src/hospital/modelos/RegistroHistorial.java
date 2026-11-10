@@ -19,6 +19,7 @@ public class RegistroHistorial {
     }
     public int getNumeroHabitacion() { return numeroHabitacion; }
     public String getIdentificacionPaciente() { return identificacionPaciente; }
+    public String getNombrePaciente() { return nombrePaciente; }
     public String getAccion() { return accion; }
     public LocalDateTime getFechaHora() { return fechaHora; }
     @Override public String toString() {

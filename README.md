@@ -1,6 +1,6 @@
-# 🏥 Gestor Hospitalario
+# Gestor Hospitalario
 
-Sistema de consola en Java para administrar pacientes, habitaciones, ingresos, salidas e historial hospitalario. Proyecto académico de Algoritmos y Programación 3.
+Aplicación de escritorio en Java Swing para administrar pacientes, habitaciones, ingresos, salidas e historial hospitalario. Proyecto académico de Algoritmos y Programación 3.
 
 ## Autores
 - José Miguel Barrientos Rivera
@@ -10,99 +10,90 @@ Sistema de consola en Java para administrar pacientes, habitaciones, ingresos, s
 **Asignatura:** Algoritmos y Programación 3  
 **Docente:** Rodolfo Luna Guzmán
 
-## Objetivo
-Gestionar 30 habitaciones (5 pisos × 6 habitaciones), pacientes y movimientos hospitalarios aplicando POO y estructuras de datos implementadas manualmente.
-
-## Funcionalidades
-1. Registrar pacientes y validar identificaciones duplicadas.
-2. Asignar manualmente habitaciones disponibles.
-3. Consultar habitaciones disponibles y ocupadas.
-4. Registrar salidas y liberar habitaciones.
-5. Consultar pacientes y buscar por identificación.
-6. Consultar historial por habitación y completo, con fecha y hora.
-7. Visualizar matriz dispersa y tripletas de ocupación.
-
-## Estructuras de datos
-- **Lista simplemente enlazada de pacientes:** conserva los pacientes durante la ejecución.
-- **Lista simplemente enlazada de historial:** registra ingresos y salidas.
-- **Matriz dispersa 5 × 6:** cada tripleta representa una habitación ocupada; la ausencia de tripleta significa disponible.
-- **Arreglo de habitaciones:** contiene los 30 objetos Habitacion.
-
 ## Arquitectura
+
+El proyecto separa responsabilidades mediante **Modelo–Vista–Controlador (MVC)** y organiza los componentes visuales con **Atomic Design**.
+
+- **Modelo:** entidades, reglas de negocio y estructuras de datos.
+- **Vista:** interfaz de escritorio construida con Java Swing.
+- **Controlador:** recibe acciones de la interfaz y coordina el modelo.
+- **Atomic Design:** átomos, moléculas, organismos, plantillas y páginas reutilizables.
+
+## Estructura del proyecto
+
 ```text
-src/
-└── hospital/
-    ├── Main.java
-    ├── modelos/
-    │   ├── Paciente.java
-    │   ├── Habitacion.java
-    │   └── RegistroHistorial.java
-    ├── estructuras/
-    │   ├── Tripleta.java
-    │   ├── MatrizDispersa.java
-    │   ├── NodoPaciente.java
-    │   ├── ListaPacientes.java
-    │   ├── NodoHistorial.java
-    │   └── ListaHistorial.java
-    └── gestion/
-        └── GestorHospital.java
+src/hospital/
+├── Main.java
+├── controlador/
+│   └── HospitalController.java
+├── modelos/
+│   ├── Paciente.java
+│   ├── Habitacion.java
+│   └── RegistroHistorial.java
+├── estructuras/
+│   ├── Tripleta.java
+│   ├── MatrizDispersa.java
+│   ├── NodoPaciente.java
+│   ├── ListaPacientes.java
+│   ├── NodoHistorial.java
+│   └── ListaHistorial.java
+├── gestion/
+│   └── GestorHospital.java
+└── vista/
+    ├── atomos/
+    ├── moleculas/
+    ├── organismos/
+    ├── plantillas/
+    └── paginas/
 ```
 
+## Funcionalidades
+- Registro y consulta de pacientes con validación de identificaciones duplicadas.
+- Asignación manual de habitaciones disponibles.
+- Consulta de las 30 habitaciones (5 pisos × 6 habitaciones).
+- Registro de salidas y liberación de habitaciones.
+- Historial de ingresos y salidas con fecha y hora.
+- Dashboard con indicadores de ocupación.
+- Visualización tabular de pacientes, habitaciones e historial.
+
+## Estructuras académicas
+- Lista simplemente enlazada manual de pacientes.
+- Lista simplemente enlazada manual de historial.
+- Matriz dispersa 5 × 6 mediante tripletas: 1 representa ocupada y la ausencia de tripleta representa disponible.
+- Arreglo de 30 objetos Habitacion.
+
+Las colecciones auxiliares de la interfaz se generan a partir de las listas propias; no reemplazan las estructuras de datos exigidas.
+
 ## Requisitos
-- JDK 17 o superior (se utilizan expresiones switch modernas).
+- JDK 17 o superior.
 - Visual Studio Code.
-- Extensiones **Extension Pack for Java**.
+- Extension Pack for Java.
 - No requiere librerías externas ni base de datos.
 
-## Ejecutar en Visual Studio Code
-1. Clonar o descargar este repositorio.
-2. Abrir la carpeta del proyecto en VS Code.
-3. Instalar Extension Pack for Java si aún no está instalado.
+## Ejecutar desde Visual Studio Code
+1. Clonar el repositorio.
+2. Abrir la carpeta en VS Code.
+3. Instalar Extension Pack for Java.
 4. Abrir `src/hospital/Main.java`.
-5. Ejecutar con **Run Java** sobre el método `main`.
+5. Ejecutar **Run Java**.
 
-También se puede compilar desde la raíz del repositorio:
+También puede compilarse desde la raíz:
 
 ```bash
-javac -d bin src/hospital/modelos/*.java src/hospital/estructuras/*.java src/hospital/gestion/*.java src/hospital/Main.java
+javac -d bin src/hospital/modelos/*.java src/hospital/estructuras/*.java src/hospital/gestion/*.java src/hospital/controlador/*.java src/hospital/vista/atomos/*.java src/hospital/vista/moleculas/*.java src/hospital/vista/organismos/*.java src/hospital/vista/plantillas/*.java src/hospital/vista/paginas/*.java src/hospital/Main.java
 java -cp bin hospital.Main
 ```
 
-## Menú
-- 1. Registrar paciente
-- 2. Asignar habitación
-- 3. Ver habitaciones disponibles
-- 4. Ver habitaciones ocupadas
-- 5. Dar salida a un paciente
-- 6. Ver todos los pacientes
-- 7. Ver historial de una habitación
-- 8. Ver matriz dispersa (tripletas)
-- 9. Buscar paciente por identificación
-- 10. Ver historial completo
-- 0. Salir
-
-## Validaciones
-- No permite identificaciones duplicadas.
-- No permite asignar habitaciones ocupadas.
-- No permite asignar más de una habitación al mismo paciente simultáneamente.
-- No permite dar salida si el paciente no tiene hospitalización activa.
-- Valida el rango de habitaciones (1 a 30), edad y triage (1 a 5).
-
 ## Alcance y limitaciones
-Los datos se almacenan en memoria y se pierden al cerrar el programa. La asignación es manual y el triage se registra como dato académico; no determina automáticamente la habitación. Este proyecto es educativo y no debe utilizarse para decisiones clínicas reales.
+Los datos se almacenan en memoria y se pierden al cerrar la aplicación. La asignación de habitaciones es manual. El triage se registra como dato académico y no determina automáticamente la habitación. Este software es educativo y no debe utilizarse para decisiones clínicas reales.
 
-## Prueba de aceptación sugerida
-1. Registrar paciente con identificación `1001`.
-2. Asignarle habitación `8`.
-3. Consultar habitaciones ocupadas y matriz: debe aparecer ocupada la posición correspondiente.
-4. Dar salida a `1001`.
-5. Consultar el historial de la habitación 8: deben aparecer ingreso y salida.
-6. Intentar dar salida nuevamente: el sistema debe rechazar la operación.
-
-## Referencias
-- IEEE. (1998). *IEEE Recommended Practice for Software Requirements Specifications* (IEEE Std 830-1998).
-- ISO/IEC/IEEE. (2018). *Systems and software engineering — Life cycle processes — Requirements engineering* (ISO/IEC/IEEE 29148:2018).
-- Schwaber, K., & Sutherland, J. (2020). *La guía de Scrum*.
+## Pruebas de aceptación
+1. Registrar un paciente con identificación `1001`.
+2. Asignarle la habitación `8`.
+3. Verificar que la habitación aparezca ocupada.
+4. Dar salida al paciente.
+5. Verificar que la habitación quede disponible y aparezcan los movimientos de ingreso y salida en el historial.
+6. Intentar dar salida nuevamente y comprobar que el sistema rechace la operación.
 
 ---
 Proyecto académico — Gestor Hospitalario.
