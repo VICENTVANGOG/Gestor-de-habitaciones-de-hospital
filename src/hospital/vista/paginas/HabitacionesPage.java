@@ -102,7 +102,12 @@ public class HabitacionesPage extends JPanel {
         content.add(metrics, BorderLayout.NORTH);
         content.add(mapCard, BorderLayout.CENTER);
         page.add(content, BorderLayout.CENTER);
-        add(page, BorderLayout.CENTER);
+        JScrollPane pageScroll = new JScrollPane(page);
+        pageScroll.setBorder(null);
+        pageScroll.setOpaque(false);
+        pageScroll.getViewport().setOpaque(false);
+        pageScroll.getVerticalScrollBar().setUnitIncrement(16);
+        add(pageScroll, BorderLayout.CENTER);
 
         assignButton.addActionListener(e -> assignPatient());
         dischargeButton.addActionListener(e -> dischargePatient());

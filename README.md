@@ -82,7 +82,7 @@ tests/
 - Registro de salidas y liberación de habitaciones.
 - Historial de ingresos y salidas con fecha y hora.
 - Dashboard con indicadores calculados desde el estado real del modelo.
-- Visualización de matriz dispersa y tripletas.
+- Matriz dispersa 5 × 6 representada internamente mediante tripletas, sincronizada con las asignaciones y salidas. La estructura se conserva para evaluación académica y no se expone como un botón en la interfaz.
 
 ## Estructuras académicas
 - Lista simplemente enlazada manual de pacientes.
