@@ -1,6 +1,7 @@
 package hospital.vista.organismos;
 
 import hospital.vista.atomos.UiColors;
+import hospital.vista.atomos.UiIcon;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -57,7 +58,7 @@ public class Sidebar extends JPanel {
     }
     private void addItem(JPanel parent,String label,String key,String glyph,Consumer<String> navigation) {
         JPanel wrap=new JPanel(new BorderLayout());wrap.setOpaque(false);wrap.setMaximumSize(new Dimension(Integer.MAX_VALUE,42));wrap.setAlignmentX(LEFT_ALIGNMENT);
-        JButton button=new JButton("  "+glyph+"     "+label);button.setHorizontalAlignment(SwingConstants.LEFT);
+        JButton button=new JButton(label,new UiIcon(key,UiColors.MUTED));button.setHorizontalAlignment(SwingConstants.LEFT);button.setIconTextGap(13);
         button.setFont(new Font(UiColors.FONT,Font.BOLD,11));button.setForeground(UiColors.MUTED);button.setBackground(Color.WHITE);
         button.setFocusPainted(false);button.setBorderPainted(false);button.setOpaque(true);button.setBorder(new EmptyBorder(10,12,10,8));
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));button.addActionListener(e->navigation.accept(key));
@@ -87,6 +88,7 @@ public class Sidebar extends JPanel {
             boolean active=id.equals(key);
             button.setBackground(active?UiColors.PRIMARY_SOFT:Color.WHITE);
             button.setForeground(active?UiColors.PRIMARY:UiColors.MUTED);
+            button.setIcon(new UiIcon(id,active?UiColors.PRIMARY:UiColors.MUTED));
             button.setBorder(BorderFactory.createCompoundBorder(
                 active?BorderFactory.createMatteBorder(0,3,0,0,UiColors.PRIMARY):BorderFactory.createEmptyBorder(0,3,0,0),
                 new EmptyBorder(10,9,10,8)));

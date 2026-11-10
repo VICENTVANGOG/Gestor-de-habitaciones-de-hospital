@@ -1,6 +1,7 @@
 package hospital.vista.plantillas;
 
 import hospital.vista.atomos.UiColors;
+import hospital.vista.atomos.UiIcon;
 import hospital.vista.organismos.Sidebar;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -64,8 +65,9 @@ public class MainTemplate extends JPanel {
         });
     }
     private void addMobileItem(String label,String key,String glyph,Consumer<String> navigation) {
-        JButton b=new JButton("<html><center><font size='5'>"+glyph+"</font><br><font size='2'>"+label+"</font></center></html>");
+        JButton b=new JButton(label,new UiIcon(key,UiColors.MUTED,20));
         b.setFont(new Font(UiColors.FONT,Font.PLAIN,9));b.setForeground(UiColors.MUTED);b.setBackground(Color.WHITE);
+        b.setHorizontalTextPosition(SwingConstants.CENTER);b.setVerticalTextPosition(SwingConstants.BOTTOM);b.setIconTextGap(4);
         b.setBorder(new EmptyBorder(5,2,4,2));b.setFocusPainted(false);b.setContentAreaFilled(false);b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         b.addActionListener(e->navigation.accept(key));mobileItems.put(key,b);mobileNav.add(b);
     }
@@ -73,6 +75,6 @@ public class MainTemplate extends JPanel {
     public void showPage(String key,String name){((CardLayout)cards.getLayout()).show(cards,key);pageTitle.setText(name);}
     public void setActiveSection(String key) {
         sidebar.setActive(key);
-        mobileItems.forEach((id,b)->{boolean active=id.equals(key);b.setForeground(active?UiColors.PRIMARY:UiColors.MUTED);b.setBackground(active?UiColors.PRIMARY_SOFT:Color.WHITE);});
+        mobileItems.forEach((id,b)->{boolean active=id.equals(key);b.setForeground(active?UiColors.PRIMARY:UiColors.MUTED);b.setBackground(active?UiColors.PRIMARY_SOFT:Color.WHITE);b.setIcon(new UiIcon(id,active?UiColors.PRIMARY:UiColors.MUTED,20));});
     }
 }
