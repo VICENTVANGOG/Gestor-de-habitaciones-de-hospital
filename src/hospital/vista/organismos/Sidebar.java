@@ -17,7 +17,7 @@ public class Sidebar extends JPanel {
         setBorder(BorderFactory.createMatteBorder(0,0,0,1,UiColors.BORDER));
         setPreferredSize(new Dimension(216,0));
         JPanel content=new JPanel();content.setOpaque(false);
-        content.setBorder(new EmptyBorder(25,12,17,12));
+        content.setBorder(new EmptyBorder(17,12,14,12));
         content.setLayout(new BoxLayout(content,BoxLayout.Y_AXIS));
 
         JPanel brand=new JPanel(new FlowLayout(FlowLayout.LEFT,10,0));brand.setOpaque(false);
@@ -26,7 +26,7 @@ public class Sidebar extends JPanel {
         JLabel brandName=new JLabel("Hospitalize");brandName.setFont(new Font(UiColors.FONT,Font.BOLD,16));brandName.setForeground(UiColors.INK);
         JLabel brandSub=new JLabel("PANEL DE GESTIÓN");brandSub.setFont(new Font(UiColors.FONT,Font.BOLD,8));brandSub.setForeground(UiColors.MUTED);
         brandCopy.add(brandName);brandCopy.add(Box.createVerticalStrut(3));brandCopy.add(brandSub);brand.add(brandCopy);
-        content.add(brand);content.add(Box.createVerticalStrut(34));
+        content.add(brand);content.add(Box.createVerticalStrut(20));
 
         JLabel section=new JLabel("MENÚ PRINCIPAL");section.setFont(new Font(UiColors.FONT,Font.BOLD,9));
         section.setForeground(UiColors.TEXT_MUTED);section.setBorder(new EmptyBorder(0,9,12,0));
@@ -52,7 +52,7 @@ public class Sidebar extends JPanel {
     }
     private void addItem(JPanel parent,String label,String key,Consumer<String> navigation) {
         NavButton button=new NavButton(label,key);button.addActionListener(e->navigation.accept(key));
-        button.setAlignmentX(LEFT_ALIGNMENT);button.setMaximumSize(new Dimension(Integer.MAX_VALUE,45));
+        button.setAlignmentX(LEFT_ALIGNMENT);button.setMaximumSize(new Dimension(Integer.MAX_VALUE,42));
         items.put(key,button);parent.add(button);parent.add(Box.createVerticalStrut(6));
     }
     public void setCompact(boolean compact) {}
@@ -62,7 +62,7 @@ public class Sidebar extends JPanel {
             setHorizontalAlignment(SwingConstants.LEFT);setIconTextGap(13);
             setFont(new Font(UiColors.FONT,Font.BOLD,11));setForeground(UiColors.MUTED);
             setFocusPainted(false);setBorderPainted(false);setContentAreaFilled(false);
-            setBorder(new EmptyBorder(12,13,12,10));setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));}
+            setBorder(new EmptyBorder(10,13,10,10));setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));}
         void setActive(boolean value){active=value;setForeground(value?UiColors.PRIMARY:UiColors.MUTED);
             setIcon(new UiIcon(key,value?UiColors.PRIMARY:UiColors.MUTED,19));repaint();}
         @Override protected void paintComponent(Graphics graphics){Graphics2D g=(Graphics2D)graphics.create();

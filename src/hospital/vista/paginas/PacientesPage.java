@@ -41,7 +41,7 @@ public class PacientesPage extends JPanel {
         labels.add(eyebrow);labels.add(Box.createVerticalStrut(7));labels.add(title);labels.add(Box.createVerticalStrut(4));labels.add(subtitle);
         UiButton add=new UiButton("Registrar paciente");
         add.setIcon(new UiIcon("plus",Color.WHITE,15));add.setIconTextGap(7);add.setFont(new Font(UiColors.FONT,Font.BOLD,11));
-        add.setPreferredSize(new Dimension(164,39));add.setMinimumSize(new Dimension(164,39));
+        add.setPreferredSize(new Dimension(146,35));add.setMinimumSize(new Dimension(146,35));add.setBorder(new EmptyBorder(8,12,8,12));
         heading.add(labels,BorderLayout.CENTER);heading.add(add,BorderLayout.EAST);page.add(heading,BorderLayout.NORTH);
 
         UiCard card=new UiCard(18,18);card.setLayout(new BorderLayout(0,14));
@@ -92,21 +92,28 @@ public class PacientesPage extends JPanel {
 
     private void register(){
         JTextField id=field(),name=field(),age=field(),triage=field(),reason=field();
-        JPanel fields=new JPanel(new GridLayout(0,2,12,12));fields.setBackground(Color.WHITE);
-        fields.add(labelField("Identificación",id));fields.add(labelField("Nombre completo",name));
-        fields.add(labelField("Edad",age));fields.add(labelField("Nivel de triage (1–5)",triage));
-        fields.add(labelField("Motivo de ingreso",reason));
-        if(!UiDialogs.confirm(this,"Registrar nuevo paciente","Completa la información clínica para crear el registro.",fields))return;
+        JPanel fields=new JPanel(new GridLayout(0,2,14,13));fields.setOpaque(false);
+        fields.setBorder(new EmptyBorder(8,2,8,2));
+        fields.add(labelField("IDENTIFICACIÓN",id));fields.add(labelField("NOMBRE COMPLETO",name));
+        fields.add(labelField("EDAD",age));fields.add(labelField("NIVEL DE TRIAGE (1–5)",triage));
+        fields.add(labelField("MOTIVO DE INGRESO",reason));
+        fields.setPreferredSize(new Dimension(490,205));
+        id.setToolTipText("Número de documento del paciente");
+        name.setToolTipText("Nombre y apellidos");
+        age.setToolTipText("Edad en años");
+        triage.setToolTipText("Valor entre 1 y 5");
+        reason.setToolTipText("Motivo clínico del ingreso");
+        if(!UiDialogs.confirm(this,"Nuevo paciente","Registra los datos básicos para crear la ficha clínica.",fields))return;
         try{
             controller.registrarPaciente(id.getText(),name.getText(),Integer.parseInt(age.getText().trim()),
                 Integer.parseInt(triage.getText().trim()),reason.getText());
             refresh();UiDialogs.message(this,"Registro exitoso","El paciente fue registrado correctamente.",JOptionPane.INFORMATION_MESSAGE);
         }catch(Exception ex){UiDialogs.message(this,"No se pudo registrar",ex.getMessage(),JOptionPane.WARNING_MESSAGE);}
     }
-    private JTextField field(){JTextField f=new JTextField(16);f.setFont(new Font(UiColors.FONT,Font.PLAIN,12));return f;}
+    private JTextField field(){JTextField f=new UiTextField(16);f.setFont(new Font(UiColors.FONT,Font.PLAIN,12));f.setPreferredSize(new Dimension(210,40));return f;}
     private JPanel labelField(String text,JTextField field){
-        JPanel p=new JPanel(new BorderLayout(0,5));p.setOpaque(false);
-        JLabel l=new JLabel(text);l.setFont(new Font(UiColors.FONT,Font.BOLD,10));l.setForeground(UiColors.MUTED);
+        JPanel p=new JPanel(new BorderLayout(0,7));p.setOpaque(false);
+        JLabel l=new JLabel(text);l.setFont(new Font(UiColors.FONT,Font.BOLD,9));l.setForeground(UiColors.INK);
         p.add(l,BorderLayout.NORTH);p.add(field,BorderLayout.CENTER);return p;
     }
     public void refresh(){
@@ -152,11 +159,11 @@ public class PacientesPage extends JPanel {
         }
     }
     static void styleTable(JTable table){
-        table.setRowHeight(48);table.setFont(new Font(UiColors.FONT,Font.PLAIN,11));table.setForeground(UiColors.INK);
+        table.setRowHeight(52);table.setFont(new Font(UiColors.FONT,Font.PLAIN,11));table.setForeground(UiColors.INK);
         table.setSelectionBackground(UiColors.PRIMARY_SOFT);table.setSelectionForeground(UiColors.INK);
         table.setGridColor(new Color(244,247,251));table.setShowVerticalLines(false);table.setShowHorizontalLines(true);table.setIntercellSpacing(new Dimension(0,0));
         table.setFillsViewportHeight(true);table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-        table.getTableHeader().setPreferredSize(new Dimension(0,40));table.getTableHeader().setFont(new Font(UiColors.FONT,Font.BOLD,10));
+        table.getTableHeader().setPreferredSize(new Dimension(0,44));table.getTableHeader().setFont(new Font(UiColors.FONT,Font.BOLD,10));
         table.getTableHeader().setBackground(new Color(249,251,254));table.getTableHeader().setForeground(UiColors.MUTED);
         table.getTableHeader().setBorder(BorderFactory.createMatteBorder(0,0,1,0,UiColors.BORDER));
         table.getTableHeader().setReorderingAllowed(false);

@@ -29,7 +29,6 @@ public class DashboardPage extends JPanel {
     private final JPanel capacityRows=new JPanel();
     private final DonutGauge gauge=new DonutGauge();
     private final JLabel activityCount=new JLabel("0 movimientos");
-    private static final DateTimeFormatter DATE=DateTimeFormatter.ofPattern("EEEE, d 'DE' MMMM",new Locale("es","CO"));
     private static final DateTimeFormatter TIME=DateTimeFormatter.ofPattern("HH:mm");
 
     public DashboardPage(HospitalController controller) {
@@ -37,12 +36,12 @@ public class DashboardPage extends JPanel {
         setLayout(new BorderLayout());setOpaque(false);
 
         JPanel page=new ScrollablePanel();page.setOpaque(false);
-        page.setBorder(new EmptyBorder(22,26,26,26));
+        page.setBorder(new EmptyBorder(12,20,14,20));
         page.setLayout(new BoxLayout(page,BoxLayout.Y_AXIS));
 
         JPanel intro=new JPanel(new BorderLayout(16,8));intro.setOpaque(false);
         JPanel introText=new JPanel();introText.setOpaque(false);introText.setLayout(new BoxLayout(introText,BoxLayout.Y_AXIS));
-        JLabel eyebrow=new JLabel("●  "+LocalDate.now().format(DATE).toUpperCase(new Locale("es","CO"))+"  ·  RESUMEN DEL DÍA");
+        JLabel eyebrow=new JLabel("RESUMEN GENERAL");
         eyebrow.setFont(new Font(UiColors.FONT,Font.BOLD,9));eyebrow.setForeground(UiColors.PRIMARY);
         JLabel title=new JLabel(greeting()+", equipo");
         title.setFont(new Font(UiColors.FONT,Font.BOLD,25));title.setForeground(UiColors.INK);
@@ -51,19 +50,14 @@ public class DashboardPage extends JPanel {
         introText.add(eyebrow);introText.add(Box.createVerticalStrut(8));introText.add(title);
         introText.add(Box.createVerticalStrut(4));introText.add(subtitle);
         intro.add(introText,BorderLayout.CENTER);
-        JLabel dateChip=new JLabel("  "+LocalDate.now().format(DateTimeFormatter.ofPattern("dd · MM · yyyy"))+"  ");
-        dateChip.setFont(new Font(UiColors.FONT,Font.BOLD,10));dateChip.setForeground(UiColors.MUTED);
-        dateChip.setOpaque(true);dateChip.setBackground(Color.WHITE);dateChip.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(UiColors.BORDER),new EmptyBorder(8,4,8,4)));
-        intro.add(dateChip,BorderLayout.EAST);
-        page.add(intro);page.add(Box.createVerticalStrut(20));
+        page.add(intro);page.add(Box.createVerticalStrut(8));
 
-        AdaptiveGrid metrics=new AdaptiveGrid(4,2,2,12,12,112);
+        AdaptiveGrid metrics=new AdaptiveGrid(4,2,2,10,10,88);
         metrics.add(patientsCard);metrics.add(occupiedCard);metrics.add(availableCard);metrics.add(occupancyCard);
-        metrics.setPreferredSize(new Dimension(900,112));
-        page.add(metrics);page.add(Box.createVerticalStrut(16));
+        metrics.setPreferredSize(new Dimension(900,88));
+        page.add(metrics);page.add(Box.createVerticalStrut(10));
 
-        AdaptiveGrid middle=new AdaptiveGrid(2,1,1,14,14,235);
+        AdaptiveGrid middle=new AdaptiveGrid(2,1,1,12,12,164);
         UiCard floorsCard=card();
         floorsCard.setLayout(new BorderLayout(0,14));
         floorsCard.add(section("Ocupación por piso","Distribución de habitaciones ocupadas"),BorderLayout.NORTH);
@@ -75,10 +69,10 @@ public class DashboardPage extends JPanel {
         priorityRows.setOpaque(false);priorityRows.setLayout(new BoxLayout(priorityRows,BoxLayout.Y_AXIS));
         priorityCard.add(priorityRows,BorderLayout.CENTER);
         middle.add(floorsCard);middle.add(priorityCard);
-        middle.setPreferredSize(new Dimension(900,235));
-        page.add(middle);page.add(Box.createVerticalStrut(16));
+        middle.setPreferredSize(new Dimension(900,164));
+        page.add(middle);page.add(Box.createVerticalStrut(10));
 
-        AdaptiveGrid lower=new AdaptiveGrid(3,2,1,14,14,220);
+        AdaptiveGrid lower=new AdaptiveGrid(3,2,1,12,12,156);
         UiCard activityCard=card();activityCard.setLayout(new BorderLayout(0,12));
         JPanel activityHeader=new JPanel(new BorderLayout());activityHeader.setOpaque(false);
         activityHeader.add(section("Movimientos recientes","Últimos ingresos y salidas registrados"),BorderLayout.CENTER);
@@ -106,16 +100,15 @@ public class DashboardPage extends JPanel {
         summary.add(legend(UiColors.DANGER,"Ocupadas"));summary.add(Box.createVerticalGlue());
         summaryCard.add(summary,BorderLayout.CENTER);
         lower.add(activityCard);lower.add(gaugeCard);lower.add(summaryCard);
-        lower.setPreferredSize(new Dimension(900,220));
+        lower.setPreferredSize(new Dimension(900,156));
         page.add(lower);
 
         page.addComponentListener(new java.awt.event.ComponentAdapter(){
             @Override public void componentResized(java.awt.event.ComponentEvent e){
                 int width=page.getWidth();
-                page.setBorder(new EmptyBorder(18, width < 520 ? 14 : 26, 22, width < 520 ? 14 : 26));
-                eyebrow.setText(width < 520 ? "●  RESUMEN DEL DÍA" : "●  "+LocalDate.now().format(DATE).toUpperCase(new Locale("es","CO"))+"  ·  RESUMEN DEL DÍA");
-                title.setFont(new Font(UiColors.FONT, Font.BOLD, width < 520 ? 21 : 25));
-                dateChip.setVisible(width >= 520);
+                page.setBorder(new EmptyBorder(10, width < 520 ? 12 : 20, 12, width < 520 ? 12 : 20));
+                eyebrow.setText("RESUMEN GENERAL");
+                title.setFont(new Font(UiColors.FONT, Font.BOLD, width < 520 ? 20 : 23));
                 subtitle.setText(width < 520 ? "<html>Todo lo importante de tu centro hospitalario,<br>en un solo lugar.</html>" : "Todo lo importante de tu centro hospitalario, en un solo lugar.");
                 metrics.adapt(width);middle.adapt(width);lower.adapt(width);
             }

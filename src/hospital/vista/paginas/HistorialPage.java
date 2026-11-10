@@ -39,8 +39,8 @@ public class HistorialPage extends JPanel {
         JLabel subtitle=new JLabel("<html>Registro cronológico de ingresos y salidas<br>de pacientes.</html>");
         subtitle.setFont(new Font(UiColors.FONT,Font.PLAIN,11));subtitle.setForeground(UiColors.MUTED);
         labels.add(eyebrow);labels.add(Box.createVerticalStrut(7));labels.add(title);labels.add(Box.createVerticalStrut(4));labels.add(subtitle);
-        UiButton refresh=new UiButton("Actualizar",false);refresh.setIcon(new UiIcon("refresh",UiColors.MUTED,14));refresh.setIconTextGap(7);refresh.setFont(new Font(UiColors.FONT,Font.BOLD,10));refresh.setPreferredSize(new Dimension(112,37));heading.setOpaque(false);
-        heading.add(labels,BorderLayout.CENTER);heading.add(refresh,BorderLayout.EAST);page.add(heading,BorderLayout.NORTH);
+        heading.setOpaque(false);
+        heading.add(labels,BorderLayout.CENTER);page.add(heading,BorderLayout.NORTH);
 
         UiCard card=new UiCard(18,18);card.setLayout(new BorderLayout(0,14));toolbar.setOpaque(false);
         JLabel tableTitle=new JLabel("Movimientos registrados");tableTitle.setFont(new Font(UiColors.FONT,Font.BOLD,13));tableTitle.setForeground(UiColors.INK);
@@ -51,13 +51,18 @@ public class HistorialPage extends JPanel {
         toolbar.add(titleBox,BorderLayout.WEST);toolbar.add(search,BorderLayout.EAST);
 
         PacientesPage.styleTable(table);table.setRowSorter(sorter);
-        table.getColumnModel().getColumn(1).setCellRenderer(new MovementRenderer());tableScroll=new JScrollPane(table);tableScroll.setBorder(null);
+        table.getColumnModel().getColumn(1).setCellRenderer(new MovementRenderer());
+        table.getColumnModel().getColumn(0).setPreferredWidth(145);
+        table.getColumnModel().getColumn(1).setPreferredWidth(105);
+        table.getColumnModel().getColumn(2).setPreferredWidth(120);
+        table.getColumnModel().getColumn(3).setPreferredWidth(190);
+        table.getColumnModel().getColumn(4).setPreferredWidth(145);
+        tableScroll=new JScrollPane(table);tableScroll.setBorder(null);
         tableScroll.getViewport().setBackground(Color.WHITE);
         mobileList.setOpaque(false);mobileList.setLayout(new BoxLayout(mobileList,BoxLayout.Y_AXIS));
         listing.add(tableScroll,BorderLayout.CENTER);
         card.add(toolbar,BorderLayout.NORTH);card.add(listing,BorderLayout.CENTER);page.add(card,BorderLayout.CENTER);
         JScrollPane pageScroll=new JScrollPane(page);pageScroll.setBorder(null);pageScroll.setOpaque(false);pageScroll.getViewport().setOpaque(false);pageScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);pageScroll.getVerticalScrollBar().setUnitIncrement(16);add(pageScroll,BorderLayout.CENTER);
-        refresh.addActionListener(e->refresh());
         search.getDocument().addDocumentListener(new javax.swing.event.DocumentListener(){
             private void filter(){String q=search.getText().trim();sorter.setRowFilter(q.isEmpty()?null:RowFilter.regexFilter("(?i)"+java.util.regex.Pattern.quote(q)));refreshMobile();}
             public void insertUpdate(javax.swing.event.DocumentEvent e){filter();}
