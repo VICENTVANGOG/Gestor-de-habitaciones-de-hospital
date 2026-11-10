@@ -51,6 +51,13 @@ public final class UiPreview {
         show(root[0], page[0], "historial"); Thread.sleep(350);
         capture(robot, frame, output.resolve("history-desktop.png"));
 
+        SwingUtilities.invokeAndWait(() -> frame.setSize(768, 1024));
+        Thread.sleep(600);
+        show(root[0], page[0], "dashboard"); Thread.sleep(250);
+        capture(robot, frame, output.resolve("dashboard-tablet.png"));
+        show(root[0], page[0], "habitaciones"); Thread.sleep(350);
+        capture(robot, frame, output.resolve("rooms-tablet.png"));
+
         SwingUtilities.invokeAndWait(() -> frame.setSize(390, 844));
         Thread.sleep(700);
         show(root[0], page[0], "dashboard"); Thread.sleep(300);
