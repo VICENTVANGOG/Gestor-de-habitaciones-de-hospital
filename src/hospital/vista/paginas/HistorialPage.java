@@ -52,7 +52,7 @@ public class HistorialPage extends JPanel {
 
         PacientesPage.styleTable(table);table.setRowSorter(sorter);
         table.getColumnModel().getColumn(1).setCellRenderer(new MovementRenderer());tableScroll=new JScrollPane(table);tableScroll.setBorder(null);
-        tableScroll.getViewport().setBackground(Color.WHITE);tableScroll.getViewport().setBorder(new EmptyBorder(2,0,0,0));
+        tableScroll.getViewport().setBackground(Color.WHITE);
         mobileList.setOpaque(false);mobileList.setLayout(new BoxLayout(mobileList,BoxLayout.Y_AXIS));
         listing.add(tableScroll,BorderLayout.CENTER);
         card.add(toolbar,BorderLayout.NORTH);card.add(listing,BorderLayout.CENTER);page.add(card,BorderLayout.CENTER);

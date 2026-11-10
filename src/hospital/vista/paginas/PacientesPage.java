@@ -56,7 +56,7 @@ public class PacientesPage extends JPanel {
         table.setRowSorter(sorter);styleTable(table);
         table.getColumnModel().getColumn(3).setCellRenderer(new TriageRenderer());
         tableScroll=new JScrollPane(table);tableScroll.setBorder(null);
-        tableScroll.getViewport().setBackground(Color.WHITE);tableScroll.getViewport().setBorder(new EmptyBorder(2,0,0,0));tableScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        tableScroll.getViewport().setBackground(Color.WHITE);tableScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         cardsList.setOpaque(false);cardsList.setLayout(new BoxLayout(cardsList,BoxLayout.Y_AXIS));
         listing.add(tableScroll,BorderLayout.CENTER);
         card.add(toolbar,BorderLayout.NORTH);card.add(listing,BorderLayout.CENTER);page.add(card,BorderLayout.CENTER);
