@@ -35,8 +35,8 @@ public class Main {
             root[0].setActiveSection("dashboard");
             JFrame frame = new JFrame("Hospitalize · Gestor Hospitalario");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setMinimumSize(new Dimension(1080, 720));
-            frame.setSize(1356, 930);
+            frame.setMinimumSize(new Dimension(390, 640));
+            frame.setSize(1360, 900);
             frame.setLocationRelativeTo(null);
             frame.setContentPane(root[0]);
             frame.setVisible(true);

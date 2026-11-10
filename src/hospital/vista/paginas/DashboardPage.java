@@ -77,7 +77,7 @@ public class DashboardPage extends JPanel {
         activity.setOpaque(false); activity.setLayout(new BoxLayout(activity, BoxLayout.Y_AXIS));
         activityCard.add(activity, BorderLayout.CENTER);
         activityCard.setPreferredSize(new Dimension(900, 205));
-        page.add(activityCard);
+        page.add(activityCard);\n        page.addComponentListener(new java.awt.event.ComponentAdapter() {\n            @Override public void componentResized(java.awt.event.ComponentEvent e) {\n                int width = page.getWidth();\n                metrics.setLayout(new GridLayout(width < 620 ? 2 : 1, width < 620 ? 2 : 4, 10, 10));\n                middle.setLayout(new GridLayout(width < 820 ? 2 : 1, width < 820 ? 1 : 2, 12, 12));\n                page.revalidate();\n            }\n        });
 
         JScrollPane scroll = new JScrollPane(page);
         scroll.setBorder(null);
