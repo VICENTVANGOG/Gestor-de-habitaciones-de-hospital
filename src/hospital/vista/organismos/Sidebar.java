@@ -44,12 +44,12 @@ public class Sidebar extends JPanel {
         copy.add(name);copy.add(Box.createVerticalStrut(5));copy.add(subtitle);
         brand.add(copy,BorderLayout.CENTER);
         upper.add(brand);
-        upper.add(Box.createVerticalStrut(42));
+        upper.add(Box.createVerticalStrut(30));
 
         JLabel section=new JLabel("ESPACIO DE TRABAJO");
         section.setFont(new Font(UiColors.FONT,Font.BOLD,9));
         section.setForeground(new Color(117,139,173));
-        section.setBorder(new EmptyBorder(0,11,13,0));
+        section.setBorder(new EmptyBorder(0,0,13,0));
         section.setAlignmentX(LEFT_ALIGNMENT);
         upper.add(section);
 

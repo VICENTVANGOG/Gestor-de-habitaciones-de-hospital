@@ -36,7 +36,7 @@ public class DashboardPage extends JPanel {
         setLayout(new BorderLayout());setOpaque(false);
 
         JPanel page=new JPanel(new GridBagLayout());page.setOpaque(false);
-        page.setBorder(new EmptyBorder(16,20,18,20));
+        page.setBorder(new EmptyBorder(8,20,12,20));
 
         JPanel intro=new JPanel(new BorderLayout(16,8));intro.setOpaque(false);
         JPanel introText=new JPanel();introText.setOpaque(false);introText.setLayout(new BoxLayout(introText,BoxLayout.Y_AXIS));
@@ -49,11 +49,11 @@ public class DashboardPage extends JPanel {
         introText.add(eyebrow);introText.add(Box.createVerticalStrut(8));introText.add(title);
         introText.add(Box.createVerticalStrut(4));introText.add(subtitle);
         intro.add(introText,BorderLayout.CENTER);
-        addDashboardRow(page,intro,0,0.12,8);
+        addDashboardRow(page,intro,0,0.10,6);
 
         AdaptiveGrid metrics=new AdaptiveGrid(4,2,2,12,12,120);
         metrics.add(patientsCard);metrics.add(occupiedCard);metrics.add(availableCard);metrics.add(occupancyCard);
-        addDashboardRow(page,metrics,1,0.18,10);
+        addDashboardRow(page,metrics,1,0.22,8);
 
         AdaptiveGrid middle=new AdaptiveGrid(2,2,1,14,14,220);
         UiCard floorsCard=card();
@@ -67,7 +67,7 @@ public class DashboardPage extends JPanel {
         priorityRows.setOpaque(false);priorityRows.setLayout(new BoxLayout(priorityRows,BoxLayout.Y_AXIS));
         priorityCard.add(priorityRows,BorderLayout.CENTER);
         middle.add(floorsCard);middle.add(priorityCard);
-        addDashboardRow(page,middle,2,0.32,10);
+        addDashboardRow(page,middle,2,0.31,8);
 
         AdaptiveGrid lower=new AdaptiveGrid(3,2,1,14,14,220);
         UiCard activityCard=card();activityCard.setLayout(new BorderLayout(0,12));
@@ -97,12 +97,12 @@ public class DashboardPage extends JPanel {
         summary.add(legend(UiColors.DANGER,"Ocupadas"));summary.add(Box.createVerticalGlue());
         summaryCard.add(summary,BorderLayout.CENTER);
         lower.add(activityCard);lower.add(gaugeCard);lower.add(summaryCard);
-        addDashboardRow(page,lower,3,0.38,0);
+        addDashboardRow(page,lower,3,0.37,0);
 
         page.addComponentListener(new java.awt.event.ComponentAdapter(){
             @Override public void componentResized(java.awt.event.ComponentEvent e){
                 int width=page.getWidth();
-                page.setBorder(new EmptyBorder(14, width < 520 ? 10 : 20, 14, width < 520 ? 10 : 20));
+                page.setBorder(new EmptyBorder(8, width < 520 ? 10 : 20, 10, width < 520 ? 10 : 20));
                 title.setFont(new Font(UiColors.FONT, Font.BOLD, width < 520 ? 20 : 25));
                 subtitle.setText(width < 520 ? "<html>Todo lo importante de tu centro hospitalario,<br>en un solo lugar.</html>" : "Todo lo importante de tu centro hospitalario, en un solo lugar.");
                 metrics.adapt(width);middle.adapt(width);lower.adapt(width);

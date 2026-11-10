@@ -10,14 +10,14 @@ public class StatCard extends JPanel {
  private final JLabel detail=new JLabel(" ");
  private final JLabel icon;
  public StatCard(String title,Color accent) {
-  setOpaque(false);setLayout(new BorderLayout(8,7));setBorder(new EmptyBorder(10,13,9,13));
+  setOpaque(false);setLayout(new BorderLayout(8,7));setBorder(new EmptyBorder(13,13,12,13));
   JPanel top=new JPanel(new BorderLayout(8,0));top.setOpaque(false);
   JLabel heading=new JLabel(title);heading.setFont(new Font(UiColors.FONT,Font.BOLD,9));heading.setForeground(UiColors.MUTED);
   icon=new JLabel(new UiIcon(symbol(title),accent,18),SwingConstants.CENTER);icon.setOpaque(true);
   icon.setBackground(new Color(accent.getRed(),accent.getGreen(),accent.getBlue(),24));icon.setForeground(accent);
   icon.setPreferredSize(new Dimension(34,34));
   top.add(heading,BorderLayout.CENTER);top.add(icon,BorderLayout.EAST);
-  value.setFont(new Font(UiColors.FONT,Font.BOLD,24));value.setForeground(UiColors.INK);
+  value.setFont(new Font(UiColors.FONT,Font.BOLD,26));value.setForeground(UiColors.INK);
   detail.setFont(new Font(UiColors.FONT,Font.PLAIN,9));detail.setForeground(UiColors.MUTED);
   add(top,BorderLayout.NORTH);add(value,BorderLayout.CENTER);add(detail,BorderLayout.SOUTH);
  }
