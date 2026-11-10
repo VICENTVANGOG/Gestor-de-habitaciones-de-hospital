@@ -2,28 +2,30 @@ package hospital.vista.moleculas;
 
 import hospital.modelos.Habitacion;
 import hospital.modelos.RegistroHistorial;
+import hospital.modelos.Paciente;
 import hospital.vista.atomos.UiColors;
-import hospital.vista.atomos.UiButton;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
-/** Diálogo de detalle: información actual e historial exclusivo de una habitación. */
+/** Diálogo de detalle: paciente actual y trazabilidad histórica de una habitación. */
 public class HabitacionDetailDialog extends JDialog {
-    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("dd MMM yyyy · HH:mm");
-    public HabitacionDetailDialog(Window owner, Habitacion room, List<RegistroHistorial> records) {
+    private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("dd MMM yyyy · HH:mm");
+
+    public HabitacionDetailDialog(Window owner, Habitacion room, List<RegistroHistorial> allHistory) {
         super(owner, "Detalle de habitación " + room.getNumero(), ModalityType.APPLICATION_MODAL);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setSize(570, 650);
-        setMinimumSize(new Dimension(520, 570));
+        setSize(560, 570);
+        setMinimumSize(new Dimension(500, 480));
         setLocationRelativeTo(owner);
 
-        JPanel root = new JPanel(new BorderLayout(0, 18));
+        JPanel root = new JPanel(new BorderLayout(0, 16));
         root.setBackground(UiColors.BACKGROUND);
-        root.setBorder(new EmptyBorder(24, 26, 22, 26));
-        setContentPane(root);
+        root.setBorder(new EmptyBorder(22, 24, 20, 24));
 
         JPanel heading = new JPanel();
         heading.setOpaque(false);
@@ -32,112 +34,144 @@ public class HabitacionDetailDialog extends JDialog {
         eyebrow.setFont(new Font(UiColors.FONT, Font.BOLD, 9));
         eyebrow.setForeground(UiColors.PRIMARY);
         JLabel title = new JLabel("Habitación " + room.getNumero());
-        title.setFont(new Font(UiColors.FONT, Font.BOLD, 25));
+        title.setFont(new Font(UiColors.FONT, Font.BOLD, 24));
         title.setForeground(UiColors.INK);
         JLabel subtitle = new JLabel("Piso " + room.getPiso() + "  ·  Posición " + room.getPosicion());
         subtitle.setFont(new Font(UiColors.FONT, Font.PLAIN, 11));
         subtitle.setForeground(UiColors.MUTED);
-        heading.add(eyebrow); heading.add(Box.createVerticalStrut(6));
-        heading.add(title); heading.add(Box.createVerticalStrut(4)); heading.add(subtitle);
-        root.add(heading, BorderLayout.NORTH);
+        heading.add(eyebrow);
+        heading.add(Box.createVerticalStrut(5));
+        heading.add(title);
+        heading.add(Box.createVerticalStrut(3));
+        heading.add(subtitle);
+
+        JPanel current = new JPanel(new BorderLayout(0, 10));
+        current.setBackground(Color.WHITE);
+        current.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(UiColors.BORDER),
+                new EmptyBorder(15, 16, 15, 16)));
+        JLabel currentTitle = new JLabel("Paciente asignado actualmente");
+        currentTitle.setFont(new Font(UiColors.FONT, Font.BOLD, 12));
+        currentTitle.setForeground(UiColors.INK);
+        current.add(currentTitle, BorderLayout.NORTH);
+        Paciente patient = room.getPaciente();
+        JPanel patientInfo = new JPanel();
+        patientInfo.setOpaque(false);
+        patientInfo.setLayout(new BoxLayout(patientInfo, BoxLayout.Y_AXIS));
+        if (patient == null) {
+            JLabel available = new JLabel("Esta habitación se encuentra disponible.");
+            available.setFont(new Font(UiColors.FONT, Font.PLAIN, 11));
+            available.setForeground(new Color(22, 151, 126));
+            patientInfo.add(available);
+        } else {
+            addInfo(patientInfo, "Nombre", patient.getNombre());
+            addInfo(patientInfo, "Identificación", patient.getIdentificacion());
+            addInfo(patientInfo, "Edad", patient.getEdad() + " años");
+            addInfo(patientInfo, "Triage", "Nivel " + patient.getNivelTriage());
+            addInfo(patientInfo, "Motivo de ingreso", patient.getMotivoIngreso());
+        }
+        current.add(patientInfo, BorderLayout.CENTER);
+
+        List<RegistroHistorial> roomHistory = allHistory.stream()
+                .filter(entry -> entry.getNumeroHabitacion() == room.getNumero())
+                .sorted(Comparator.comparing(RegistroHistorial::getFechaHora).reversed())
+                .collect(Collectors.toList());
+
+        JPanel historyCard = new JPanel(new BorderLayout(0, 10));
+        historyCard.setBackground(Color.WHITE);
+        historyCard.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(UiColors.BORDER),
+                new EmptyBorder(15, 16, 14, 16)));
+        JPanel historyHeading = new JPanel(new BorderLayout());
+        historyHeading.setOpaque(false);
+        JLabel historyTitle = new JLabel("Historial de esta habitación");
+        historyTitle.setFont(new Font(UiColors.FONT, Font.BOLD, 12));
+        historyTitle.setForeground(UiColors.INK);
+        JLabel total = new JLabel(roomHistory.size() + " movimientos");
+        total.setFont(new Font(UiColors.FONT, Font.PLAIN, 9));
+        total.setForeground(UiColors.MUTED);
+        historyHeading.add(historyTitle, BorderLayout.WEST);
+        historyHeading.add(total, BorderLayout.EAST);
+
+        JPanel timeline = new JPanel();
+        timeline.setOpaque(false);
+        timeline.setLayout(new BoxLayout(timeline, BoxLayout.Y_AXIS));
+        if (roomHistory.isEmpty()) {
+            JLabel empty = new JLabel("Todavía no hay ingresos ni salidas registrados para esta habitación.");
+            empty.setFont(new Font(UiColors.FONT, Font.PLAIN, 10));
+            empty.setForeground(UiColors.MUTED);
+            timeline.add(empty);
+        } else {
+            for (RegistroHistorial entry : roomHistory) timeline.add(historyEntry(entry));
+        }
+        JScrollPane scroll = new JScrollPane(timeline);
+        scroll.setBorder(BorderFactory.createEmptyBorder());
+        scroll.getViewport().setBackground(Color.WHITE);
+        scroll.getVerticalScrollBar().setUnitIncrement(14);
+        historyCard.add(historyHeading, BorderLayout.NORTH);
+        historyCard.add(scroll, BorderLayout.CENTER);
 
         JPanel body = new JPanel();
         body.setOpaque(false);
         body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
-
-        JPanel current = new JPanel(new BorderLayout(12, 0));
-        current.setBackground(Color.WHITE);
-        current.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(UiColors.BORDER),
-                new EmptyBorder(17, 18, 17, 18)));
-        JPanel statusBlock = new JPanel();
-        statusBlock.setOpaque(false);
-        statusBlock.setLayout(new BoxLayout(statusBlock, BoxLayout.Y_AXIS));
-        JLabel statusLabel = new JLabel(room.isOcupada() ? "OCUPADA" : "DISPONIBLE");
-        statusLabel.setFont(new Font(UiColors.FONT, Font.BOLD, 9));
-        statusLabel.setForeground(room.isOcupada() ? UiColors.DANGER : UiColors.TEAL);
-        JLabel patientName = new JLabel(room.isOcupada() ? room.getPaciente().getNombre() : "Sin paciente asignado");
-        patientName.setFont(new Font(UiColors.FONT, Font.BOLD, 15));
-        patientName.setForeground(UiColors.INK);
-        statusBlock.add(statusLabel); statusBlock.add(Box.createVerticalStrut(7)); statusBlock.add(patientName);
-        current.add(statusBlock, BorderLayout.CENTER);
-        if (room.isOcupada()) {
-            JLabel id = new JLabel("CC  " + room.getPaciente().getIdentificacion());
-            id.setFont(new Font(UiColors.FONT, Font.PLAIN, 10));
-            id.setForeground(UiColors.MUTED);
-            current.add(id, BorderLayout.SOUTH);
-        }
         body.add(current);
-        body.add(Box.createVerticalStrut(20));
+        body.add(Box.createVerticalStrut(12));
+        body.add(historyCard);
 
-        JPanel historyHeader = new JPanel(new BorderLayout());
-        historyHeader.setOpaque(false);
-        JLabel historyTitle = new JLabel("Historial de esta habitación");
-        historyTitle.setFont(new Font(UiColors.FONT, Font.BOLD, 14));
-        historyTitle.setForeground(UiColors.INK);
-        JLabel total = new JLabel(records.size() + " movimientos");
-        total.setFont(new Font(UiColors.FONT, Font.PLAIN, 10));
-        total.setForeground(UiColors.MUTED);
-        historyHeader.add(historyTitle, BorderLayout.WEST);
-        historyHeader.add(total, BorderLayout.EAST);
-        body.add(historyHeader);
-        body.add(Box.createVerticalStrut(10));
-
-        JPanel timeline = new JPanel();
-        timeline.setBackground(Color.WHITE);
-        timeline.setBorder(new EmptyBorder(14, 16, 14, 16));
-        timeline.setLayout(new BoxLayout(timeline, BoxLayout.Y_AXIS));
-        if (records.isEmpty()) {
-            JLabel empty = new JLabel("<html><div style='text-align:center;padding:18px'>Todavía no hay movimientos registrados para esta habitación.</div></html>");
-            empty.setFont(new Font(UiColors.FONT, Font.PLAIN, 11));
-            empty.setForeground(UiColors.MUTED);
-            empty.setAlignmentX(Component.LEFT_ALIGNMENT);
-            timeline.add(empty);
-        } else {
-            for (int i = records.size()-1; i >= 0; i--) {
-                RegistroHistorial record = records.get(i);
-                JPanel item = new JPanel(new BorderLayout(12, 4));
-                item.setOpaque(false);
-                item.setBorder(new EmptyBorder(9, 0, 11, 0));
-                JLabel dot = new JLabel("●");
-                dot.setFont(new Font(UiColors.FONT, Font.BOLD, 15));
-                dot.setForeground("INGRESO".equalsIgnoreCase(record.getAccion()) ? UiColors.TEAL : UiColors.INFO);
-                item.add(dot, BorderLayout.WEST);
-                JPanel info = new JPanel();
-                info.setOpaque(false);
-                info.setLayout(new BoxLayout(info, BoxLayout.Y_AXIS));
-                JLabel action = new JLabel(record.getAccion().equalsIgnoreCase("INGRESO") ? "Ingreso registrado" : "Salida registrada");
-                action.setFont(new Font(UiColors.FONT, Font.BOLD, 11));
-                action.setForeground(UiColors.INK);
-                JLabel patient = new JLabel(record.getNombrePaciente() + "  ·  " + record.getIdentificacionPaciente());
-                patient.setFont(new Font(UiColors.FONT, Font.PLAIN, 10));
-                patient.setForeground(UiColors.MUTED);
-                JLabel date = new JLabel(record.getFechaHora().format(FORMAT));
-                date.setFont(new Font(UiColors.FONT, Font.PLAIN, 9));
-                date.setForeground(UiColors.MUTED);
-                info.add(action); info.add(Box.createVerticalStrut(4)); info.add(patient);
-                info.add(Box.createVerticalStrut(3)); info.add(date);
-                item.add(info, BorderLayout.CENTER);
-                timeline.add(item);
-                if (i > 0) {
-                    JSeparator separator = new JSeparator();
-                    separator.setForeground(UiColors.BORDER);
-                    timeline.add(separator);
-                }
-            }
-        }
-        JScrollPane scroll = new JScrollPane(timeline);
-        scroll.setBorder(BorderFactory.createLineBorder(UiColors.BORDER));
-        scroll.getViewport().setBackground(Color.WHITE);
-        scroll.getVerticalScrollBar().setUnitIncrement(16);
-        body.add(scroll);
-        root.add(body, BorderLayout.CENTER);
-
+        JButton close = new JButton("Cerrar");
+        close.setFont(new Font(UiColors.FONT, Font.BOLD, 11));
+        close.setForeground(Color.WHITE);
+        close.setBackground(UiColors.PRIMARY);
+        close.setFocusPainted(false);
+        close.setBorder(new EmptyBorder(10, 18, 10, 18));
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         footer.setOpaque(false);
-        UiButton close = new UiButton("Cerrar", false);
-        close.addActionListener(e -> dispose());
         footer.add(close);
+        close.addActionListener(e -> dispose());
+
+        root.add(heading, BorderLayout.NORTH);
+        root.add(body, BorderLayout.CENTER);
         root.add(footer, BorderLayout.SOUTH);
+        setContentPane(root);
+    }
+
+    private void addInfo(JPanel parent, String label, String value) {
+        JPanel row = new JPanel(new BorderLayout(12, 0));
+        row.setOpaque(false);
+        row.setBorder(new EmptyBorder(3, 0, 3, 0));
+        JLabel key = new JLabel(label);
+        key.setPreferredSize(new Dimension(125, 18));
+        key.setFont(new Font(UiColors.FONT, Font.PLAIN, 10));
+        key.setForeground(UiColors.MUTED);
+        JLabel text = new JLabel(value);
+        text.setFont(new Font(UiColors.FONT, Font.BOLD, 10));
+        text.setForeground(UiColors.INK);
+        row.add(key, BorderLayout.WEST);
+        row.add(text, BorderLayout.CENTER);
+        parent.add(row);
+    }
+
+    private JPanel historyEntry(RegistroHistorial entry) {
+        JPanel row = new JPanel(new BorderLayout(10, 0));
+        row.setOpaque(false);
+        row.setBorder(new EmptyBorder(7, 0, 7, 0));
+        JLabel marker = new JLabel("●");
+        marker.setFont(new Font(UiColors.FONT, Font.BOLD, 11));
+        marker.setForeground("INGRESO".equalsIgnoreCase(entry.getAccion()) ? UiColors.TEAL : UiColors.WARNING);
+        JPanel detail = new JPanel();
+        detail.setOpaque(false);
+        detail.setLayout(new BoxLayout(detail, BoxLayout.Y_AXIS));
+        JLabel action = new JLabel(entry.getAccion() + "  ·  " + entry.getNombrePaciente());
+        action.setFont(new Font(UiColors.FONT, Font.BOLD, 10));
+        action.setForeground(UiColors.INK);
+        JLabel meta = new JLabel(entry.getIdentificacionPaciente() + "  ·  " + entry.getFechaHora().format(DATE));
+        meta.setFont(new Font(UiColors.FONT, Font.PLAIN, 9));
+        meta.setForeground(UiColors.MUTED);
+        detail.add(action);
+        detail.add(Box.createVerticalStrut(3));
+        detail.add(meta);
+        row.add(marker, BorderLayout.WEST);
+        row.add(detail, BorderLayout.CENTER);
+        return row;
     }
 }
