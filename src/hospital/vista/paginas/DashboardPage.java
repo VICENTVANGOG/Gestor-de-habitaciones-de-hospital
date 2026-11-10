@@ -35,9 +35,8 @@ public class DashboardPage extends JPanel {
         this.controller=controller;
         setLayout(new BorderLayout());setOpaque(false);
 
-        JPanel page=new ScrollablePanel();page.setOpaque(false);
-        page.setBorder(new EmptyBorder(12,20,14,20));
-        page.setLayout(new BoxLayout(page,BoxLayout.Y_AXIS));
+        JPanel page=new JPanel(new GridBagLayout());page.setOpaque(false);
+        page.setBorder(new EmptyBorder(16,20,18,20));
 
         JPanel intro=new JPanel(new BorderLayout(16,8));intro.setOpaque(false);
         JPanel introText=new JPanel();introText.setOpaque(false);introText.setLayout(new BoxLayout(introText,BoxLayout.Y_AXIS));
@@ -50,14 +49,13 @@ public class DashboardPage extends JPanel {
         introText.add(eyebrow);introText.add(Box.createVerticalStrut(8));introText.add(title);
         introText.add(Box.createVerticalStrut(4));introText.add(subtitle);
         intro.add(introText,BorderLayout.CENTER);
-        page.add(intro);page.add(Box.createVerticalStrut(8));
+        addDashboardRow(page,intro,0,0.12,8);
 
-        AdaptiveGrid metrics=new AdaptiveGrid(4,2,2,10,10,88);
+        AdaptiveGrid metrics=new AdaptiveGrid(4,2,2,12,12,120);
         metrics.add(patientsCard);metrics.add(occupiedCard);metrics.add(availableCard);metrics.add(occupancyCard);
-        metrics.setPreferredSize(new Dimension(900,88));
-        page.add(metrics);page.add(Box.createVerticalStrut(10));
+        addDashboardRow(page,metrics,1,0.18,10);
 
-        AdaptiveGrid middle=new AdaptiveGrid(2,1,1,12,12,164);
+        AdaptiveGrid middle=new AdaptiveGrid(2,2,1,14,14,220);
         UiCard floorsCard=card();
         floorsCard.setLayout(new BorderLayout(0,14));
         floorsCard.add(section("Ocupación por piso","Distribución de habitaciones ocupadas"),BorderLayout.NORTH);
@@ -69,10 +67,9 @@ public class DashboardPage extends JPanel {
         priorityRows.setOpaque(false);priorityRows.setLayout(new BoxLayout(priorityRows,BoxLayout.Y_AXIS));
         priorityCard.add(priorityRows,BorderLayout.CENTER);
         middle.add(floorsCard);middle.add(priorityCard);
-        middle.setPreferredSize(new Dimension(900,164));
-        page.add(middle);page.add(Box.createVerticalStrut(10));
+        addDashboardRow(page,middle,2,0.32,10);
 
-        AdaptiveGrid lower=new AdaptiveGrid(3,2,1,12,12,156);
+        AdaptiveGrid lower=new AdaptiveGrid(3,2,1,14,14,220);
         UiCard activityCard=card();activityCard.setLayout(new BorderLayout(0,12));
         JPanel activityHeader=new JPanel(new BorderLayout());activityHeader.setOpaque(false);
         activityHeader.add(section("Movimientos recientes","Últimos ingresos y salidas registrados"),BorderLayout.CENTER);
@@ -100,25 +97,27 @@ public class DashboardPage extends JPanel {
         summary.add(legend(UiColors.DANGER,"Ocupadas"));summary.add(Box.createVerticalGlue());
         summaryCard.add(summary,BorderLayout.CENTER);
         lower.add(activityCard);lower.add(gaugeCard);lower.add(summaryCard);
-        lower.setPreferredSize(new Dimension(900,156));
-        page.add(lower);
+        addDashboardRow(page,lower,3,0.38,0);
 
         page.addComponentListener(new java.awt.event.ComponentAdapter(){
             @Override public void componentResized(java.awt.event.ComponentEvent e){
                 int width=page.getWidth();
-                page.setBorder(new EmptyBorder(10, width < 520 ? 12 : 20, 12, width < 520 ? 12 : 20));
-                eyebrow.setText("RESUMEN GENERAL");
-                title.setFont(new Font(UiColors.FONT, Font.BOLD, width < 520 ? 20 : 23));
+                page.setBorder(new EmptyBorder(14, width < 520 ? 10 : 20, 14, width < 520 ? 10 : 20));
+                title.setFont(new Font(UiColors.FONT, Font.BOLD, width < 520 ? 20 : 25));
                 subtitle.setText(width < 520 ? "<html>Todo lo importante de tu centro hospitalario,<br>en un solo lugar.</html>" : "Todo lo importante de tu centro hospitalario, en un solo lugar.");
                 metrics.adapt(width);middle.adapt(width);lower.adapt(width);
             }
         });
-        JScrollPane scroll=new JScrollPane(page);scroll.setBorder(null);scroll.setOpaque(false);
-        scroll.getViewport().setOpaque(false);scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);scroll.getVerticalScrollBar().setUnitIncrement(18);
-        add(scroll,BorderLayout.CENTER);
+        add(page,BorderLayout.CENTER);
         refresh();
     }
 
+    private void addDashboardRow(JPanel parent,Component child,int row,double weightY,int bottomGap){
+        GridBagConstraints c=new GridBagConstraints();
+        c.gridx=0;c.gridy=row;c.weightx=1;c.weighty=weightY;c.fill=GridBagConstraints.BOTH;
+        c.anchor=GridBagConstraints.CENTER;c.insets=new Insets(0,0,bottomGap,0);
+        parent.add(child,c);
+    }
     private String greeting(){
         int hour=LocalTime.now().getHour();
         if(hour<12)return "Buenos días";
@@ -225,7 +224,7 @@ public class DashboardPage extends JPanel {
         private final int desktop,tablet,mobile,gap,cellHeight;
         AdaptiveGrid(int desktop,int tablet,int mobile,int hgap,int vgap,int cellHeight){
             this.desktop=desktop;this.tablet=tablet;this.mobile=mobile;this.gap=hgap;this.cellHeight=cellHeight;
-            setOpaque(false);setLayout(new GridLayout(1,desktop,hgap,vgap));
+            setOpaque(false);setLayout(new GridLayout(1,desktop,hgap,vgap));setMinimumSize(new Dimension(0,0));
             addComponentListener(new java.awt.event.ComponentAdapter(){
                 @Override public void componentResized(java.awt.event.ComponentEvent e){adapt(getWidth());}
             });
@@ -236,7 +235,7 @@ public class DashboardPage extends JPanel {
                 setLayout(new GridLayout(0,cols,gap,gap));
                 int rows=Math.max(1,(getComponentCount()+cols-1)/cols);
                 int height=rows*cellHeight+Math.max(0,rows-1)*gap;
-                setPreferredSize(new Dimension(0,height));setMaximumSize(new Dimension(Integer.MAX_VALUE,height));
+                setPreferredSize(new Dimension(0,height));setMaximumSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));setMinimumSize(new Dimension(0,0));
                 revalidate();
             }
         }

@@ -40,8 +40,8 @@ public class PacientesPage extends JPanel {
         subtitle.setFont(new Font(UiColors.FONT,Font.PLAIN,11));subtitle.setForeground(UiColors.MUTED);
         labels.add(eyebrow);labels.add(Box.createVerticalStrut(7));labels.add(title);labels.add(Box.createVerticalStrut(4));labels.add(subtitle);
         UiButton add=new UiButton("Registrar paciente");
-        add.setIcon(new UiIcon("plus",Color.WHITE,15));add.setIconTextGap(7);add.setFont(new Font(UiColors.FONT,Font.BOLD,11));
-        add.setPreferredSize(new Dimension(146,35));add.setMinimumSize(new Dimension(146,35));add.setBorder(new EmptyBorder(8,12,8,12));
+        add.setIcon(new UiIcon("plus",Color.WHITE,12));add.setIconTextGap(4);add.setFont(new Font(UiColors.FONT,Font.BOLD,9));
+        add.setPreferredSize(new Dimension(136,32));add.setMinimumSize(new Dimension(136,32));add.setMaximumSize(new Dimension(136,32));add.setBorder(new EmptyBorder(6,8,6,8));
         heading.add(labels,BorderLayout.CENTER);heading.add(add,BorderLayout.EAST);page.add(heading,BorderLayout.NORTH);
 
         UiCard card=new UiCard(18,18);card.setLayout(new BorderLayout(0,14));
