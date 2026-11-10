@@ -27,6 +27,18 @@ jobs:
           convert target/ui-previews/dashboard-desktop.png -resize 480x320 -quality 28 jpg:- | base64 -w0
           echo
           echo "DESKTOP_PREVIEW_END"
+          echo "PATIENTS_DESKTOP_BEGIN"
+          convert target/ui-previews/patients-desktop.png -resize 480x320 -quality 28 jpg:- | base64 -w0
+          echo
+          echo "PATIENTS_DESKTOP_END"
+          echo "ROOMS_DESKTOP_BEGIN"
+          convert target/ui-previews/rooms-desktop.png -resize 480x320 -quality 28 jpg:- | base64 -w0
+          echo
+          echo "ROOMS_DESKTOP_END"
+          echo "HISTORY_DESKTOP_BEGIN"
+          convert target/ui-previews/history-desktop.png -resize 480x320 -quality 28 jpg:- | base64 -w0
+          echo
+          echo "HISTORY_DESKTOP_END"
           echo "MOBILE_PREVIEW_BEGIN"
           convert target/ui-previews/dashboard-mobile.png -resize 240x520 -quality 28 jpg:- | base64 -w0
           echo
