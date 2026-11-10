@@ -8,97 +8,147 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.util.List;
 
-/** Página de pacientes con tabla, búsqueda y formulario de registro. */
+/** Directorio clínico adaptable: tabla de escritorio y fichas legibles en móvil. */
 public class PacientesPage extends JPanel {
     private final HospitalController controller;
-    private final DefaultTableModel model = new DefaultTableModel(
-            new Object[]{"Identificación", "Nombre completo", "Edad", "Triage", "Motivo de ingreso"}, 0) {
-        @Override public boolean isCellEditable(int r, int c) { return false; }
+    private final DefaultTableModel model=new DefaultTableModel(
+        new Object[]{"Identificación","Nombre completo","Edad","Triage","Motivo de ingreso"},0){
+        @Override public boolean isCellEditable(int r,int c){return false;}
     };
-    private final JTable table = new JTable(model);
-    private final TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-    private final JTextField search = new JTextField();
-    private final JLabel count = new JLabel("0 pacientes");
-    public PacientesPage(HospitalController controller) {
-        this.controller = controller;
-        setLayout(new BorderLayout()); setOpaque(false);
-        JPanel page = new JPanel(new BorderLayout(0, 18));
-        page.setOpaque(false); page.setBorder(new EmptyBorder(16, 30, 28, 30));
-        JPanel heading = new JPanel(new BorderLayout()); heading.setOpaque(false);
-        JPanel labels = new JPanel(); labels.setOpaque(false); labels.setLayout(new BoxLayout(labels, BoxLayout.Y_AXIS));
-        JLabel eyebrow = new JLabel("DIRECTORIO CLÍNICO"); eyebrow.setFont(new Font(UiColors.FONT, Font.BOLD, 9)); eyebrow.setForeground(UiColors.PRIMARY);
-        JLabel title = new JLabel("Pacientes"); title.setFont(new Font(UiColors.FONT, Font.BOLD, 26)); title.setForeground(UiColors.INK);
-        JLabel subtitle = new JLabel("Consulta y administra los registros de pacientes hospitalizados.");
-        subtitle.setFont(new Font(UiColors.FONT, Font.PLAIN, 11)); subtitle.setForeground(UiColors.MUTED);
-        labels.add(eyebrow); labels.add(Box.createVerticalStrut(6)); labels.add(title); labels.add(Box.createVerticalStrut(4)); labels.add(subtitle);
-        UiButton add = new UiButton("+  Registrar paciente");
-        heading.add(labels, BorderLayout.CENTER); heading.add(add, BorderLayout.EAST);
-        page.add(heading, BorderLayout.NORTH);
+    private final JTable table=new JTable(model);
+    private final TableRowSorter<DefaultTableModel> sorter=new TableRowSorter<>(model);
+    private final JTextField search=new JTextField();
+    private final JLabel count=new JLabel("0 pacientes");
+    private final JPanel page=new JPanel(new BorderLayout(0,18));
+    private final JPanel heading=new JPanel(new BorderLayout(12,0));
+    private final JPanel labels=new JPanel();
+    private final JPanel toolbar=new JPanel(new BorderLayout(12,0));
+    private final JPanel cardsList=new JPanel();
+    private final JPanel listing=new JPanel(new CardLayout());
+    private final JScrollPane tableScroll;
+    private final JScrollPane cardsScroll;
 
-        UiCard card = new UiCard(16, 16); card.setLayout(new BorderLayout(0, 14));
-        JPanel toolbar = new JPanel(new BorderLayout(12, 0)); toolbar.setOpaque(false);
-        JLabel tableTitle = new JLabel("Listado de pacientes"); tableTitle.setFont(new Font(UiColors.FONT, Font.BOLD, 14)); tableTitle.setForeground(UiColors.INK);
-        count.setFont(new Font(UiColors.FONT, Font.PLAIN, 10)); count.setForeground(UiColors.MUTED);
-        JPanel titleBox = new JPanel(); titleBox.setOpaque(false); titleBox.setLayout(new BoxLayout(titleBox, BoxLayout.Y_AXIS));
-        titleBox.add(tableTitle); titleBox.add(Box.createVerticalStrut(4)); titleBox.add(count);
-        search.setFont(new Font(UiColors.FONT, Font.PLAIN, 11)); search.setPreferredSize(new Dimension(240, 36));
-        search.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(UiColors.BORDER), new EmptyBorder(7, 10, 7, 10)));
+    public PacientesPage(HospitalController controller){
+        this.controller=controller;setLayout(new BorderLayout());setOpaque(false);
+        page.setOpaque(false);page.setBorder(new EmptyBorder(20,26,26,26));
+        heading.setOpaque(false);
+        labels.setOpaque(false);labels.setLayout(new BoxLayout(labels,BoxLayout.Y_AXIS));
+        JLabel eyebrow=new JLabel("DIRECTORIO CLÍNICO");eyebrow.setFont(new Font(UiColors.FONT,Font.BOLD,9));eyebrow.setForeground(UiColors.PRIMARY);
+        JLabel title=new JLabel("Pacientes");title.setFont(new Font(UiColors.FONT,Font.BOLD,25));title.setForeground(UiColors.INK);
+        JLabel subtitle=new JLabel("Consulta y administra los registros de pacientes hospitalizados.");
+        subtitle.setFont(new Font(UiColors.FONT,Font.PLAIN,11));subtitle.setForeground(UiColors.MUTED);
+        labels.add(eyebrow);labels.add(Box.createVerticalStrut(7));labels.add(title);labels.add(Box.createVerticalStrut(4));labels.add(subtitle);
+        UiButton add=new UiButton("+  Registrar paciente");
+        heading.add(labels,BorderLayout.CENTER);heading.add(add,BorderLayout.EAST);page.add(heading,BorderLayout.NORTH);
+
+        UiCard card=new UiCard(18,18);card.setLayout(new BorderLayout(0,14));
+        toolbar.setOpaque(false);
+        JLabel tableTitle=new JLabel("Listado de pacientes");tableTitle.setFont(new Font(UiColors.FONT,Font.BOLD,13));tableTitle.setForeground(UiColors.INK);
+        count.setFont(new Font(UiColors.FONT,Font.PLAIN,9));count.setForeground(UiColors.MUTED);
+        JPanel titleBox=new JPanel();titleBox.setOpaque(false);titleBox.setLayout(new BoxLayout(titleBox,BoxLayout.Y_AXIS));
+        titleBox.add(tableTitle);titleBox.add(Box.createVerticalStrut(4));titleBox.add(count);
+        search.setFont(new Font(UiColors.FONT,Font.PLAIN,11));search.setPreferredSize(new Dimension(240,36));
+        search.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(UiColors.BORDER),new EmptyBorder(7,10,7,10)));
         search.setToolTipText("Buscar por identificación, nombre o motivo");
-        toolbar.add(titleBox, BorderLayout.WEST); toolbar.add(search, BorderLayout.EAST);
-        table.setRowSorter(sorter); styleTable(table);
-        JScrollPane scroll = new JScrollPane(table); scroll.setBorder(BorderFactory.createLineBorder(UiColors.BORDER));
-        scroll.getViewport().setBackground(Color.WHITE);
-        card.add(toolbar, BorderLayout.NORTH); card.add(scroll, BorderLayout.CENTER);
-        page.add(card, BorderLayout.CENTER);
-        add(page, BorderLayout.CENTER);
-        add.addActionListener(e -> register());
-        search.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            private void filter() { sorter.setRowFilter(search.getText().trim().isEmpty() ? null : RowFilter.regexFilter("(?i)" + java.util.regex.Pattern.quote(search.getText().trim()))); }
-            public void insertUpdate(javax.swing.event.DocumentEvent e) { filter(); }
-            public void removeUpdate(javax.swing.event.DocumentEvent e) { filter(); }
-            public void changedUpdate(javax.swing.event.DocumentEvent e) { filter(); }
+        toolbar.add(titleBox,BorderLayout.WEST);toolbar.add(search,BorderLayout.EAST);
+
+        table.setRowSorter(sorter);styleTable(table);
+        tableScroll=new JScrollPane(table);tableScroll.setBorder(BorderFactory.createLineBorder(UiColors.BORDER));
+        tableScroll.getViewport().setBackground(Color.WHITE);tableScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        cardsList.setOpaque(false);cardsList.setLayout(new BoxLayout(cardsList,BoxLayout.Y_AXIS));
+        cardsScroll=new JScrollPane(cardsList);cardsScroll.setBorder(null);cardsScroll.setOpaque(false);cardsScroll.getViewport().setOpaque(false);
+        listing.add(tableScroll,"table");listing.add(cardsScroll,"cards");
+        card.add(toolbar,BorderLayout.NORTH);card.add(listing,BorderLayout.CENTER);page.add(card,BorderLayout.CENTER);
+        add(new JScrollPane(page),BorderLayout.CENTER);
+        add.getAccessibleContext().setAccessibleName("Registrar paciente");
+        add.addActionListener(e->register());
+        search.getDocument().addDocumentListener(new javax.swing.event.DocumentListener(){
+            private void filter(){
+                String q=search.getText().trim();
+                sorter.setRowFilter(q.isEmpty()?null:RowFilter.regexFilter("(?i)"+java.util.regex.Pattern.quote(q)));
+                refreshCards();
+            }
+            public void insertUpdate(javax.swing.event.DocumentEvent e){filter();}
+            public void removeUpdate(javax.swing.event.DocumentEvent e){filter();}
+            public void changedUpdate(javax.swing.event.DocumentEvent e){filter();}
+        });
+        page.addComponentListener(new java.awt.event.ComponentAdapter(){
+            @Override public void componentResized(java.awt.event.ComponentEvent e){
+                boolean narrow=page.getWidth()<720;
+                page.setBorder(new EmptyBorder(16,narrow?12:26,22,narrow?12:26));
+                heading.setLayout(new BorderLayout(8,narrow?10:0));
+                if(narrow){heading.add(labels,BorderLayout.NORTH);heading.add(add,BorderLayout.SOUTH);}
+                else{heading.add(labels,BorderLayout.CENTER);heading.add(add,BorderLayout.EAST);}
+                toolbar.setLayout(new BorderLayout(8,narrow?10:0));
+                if(narrow){toolbar.add(titleBox,BorderLayout.NORTH);toolbar.add(search,BorderLayout.SOUTH);search.setPreferredSize(new Dimension(0,38));}
+                else{toolbar.add(titleBox,BorderLayout.WEST);toolbar.add(search,BorderLayout.EAST);search.setPreferredSize(new Dimension(240,36));}
+                ((CardLayout)listing.getLayout()).show(listing,narrow?"cards":"table");
+                page.revalidate();
+            }
         });
         refresh();
     }
-    private void register() {
-        JTextField id = field(), name = field(), age = field(), triage = field(), reason = field();
-        JPanel fields = new JPanel(new GridLayout(0, 2, 12, 12)); fields.setBackground(Color.WHITE);
-        fields.add(labelField("Identificación", id)); fields.add(labelField("Nombre completo", name));
-        fields.add(labelField("Edad", age)); fields.add(labelField("Nivel de triage (1–5)", triage));
-        fields.add(labelField("Motivo de ingreso", reason));
-        if (JOptionPane.showConfirmDialog(this, fields, "Registrar nuevo paciente", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) != JOptionPane.OK_OPTION) return;
-        try {
-            controller.registrarPaciente(id.getText(), name.getText(), Integer.parseInt(age.getText().trim()),
-                    Integer.parseInt(triage.getText().trim()), reason.getText());
-            refresh();
-            JOptionPane.showMessageDialog(this, "Paciente registrado correctamente.", "Registro exitoso", JOptionPane.INFORMATION_MESSAGE);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "No se pudo registrar", JOptionPane.WARNING_MESSAGE);
-        }
+
+    private void register(){
+        JTextField id=field(),name=field(),age=field(),triage=field(),reason=field();
+        JPanel fields=new JPanel(new GridLayout(0,2,12,12));fields.setBackground(Color.WHITE);
+        fields.add(labelField("Identificación",id));fields.add(labelField("Nombre completo",name));
+        fields.add(labelField("Edad",age));fields.add(labelField("Nivel de triage (1–5)",triage));
+        fields.add(labelField("Motivo de ingreso",reason));
+        if(JOptionPane.showConfirmDialog(this,fields,"Registrar nuevo paciente",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE)!=JOptionPane.OK_OPTION)return;
+        try{
+            controller.registrarPaciente(id.getText(),name.getText(),Integer.parseInt(age.getText().trim()),
+                Integer.parseInt(triage.getText().trim()),reason.getText());
+            refresh();JOptionPane.showMessageDialog(this,"Paciente registrado correctamente.","Registro exitoso",JOptionPane.INFORMATION_MESSAGE);
+        }catch(Exception ex){JOptionPane.showMessageDialog(this,ex.getMessage(),"No se pudo registrar",JOptionPane.WARNING_MESSAGE);}
     }
-    private JTextField field() { JTextField f = new JTextField(16); f.setFont(new Font(UiColors.FONT, Font.PLAIN, 12)); return f; }
-    private JPanel labelField(String text, JTextField field) {
-        JPanel p = new JPanel(new BorderLayout(0, 5)); p.setOpaque(false);
-        JLabel l = new JLabel(text); l.setFont(new Font(UiColors.FONT, Font.BOLD, 10)); l.setForeground(UiColors.MUTED);
-        p.add(l, BorderLayout.NORTH); p.add(field, BorderLayout.CENTER); return p;
+    private JTextField field(){JTextField f=new JTextField(16);f.setFont(new Font(UiColors.FONT,Font.PLAIN,12));return f;}
+    private JPanel labelField(String text,JTextField field){
+        JPanel p=new JPanel(new BorderLayout(0,5));p.setOpaque(false);
+        JLabel l=new JLabel(text);l.setFont(new Font(UiColors.FONT,Font.BOLD,10));l.setForeground(UiColors.MUTED);
+        p.add(l,BorderLayout.NORTH);p.add(field,BorderLayout.CENTER);return p;
     }
-    public void refresh() {
+    public void refresh(){
         model.setRowCount(0);
-        for (Paciente p : controller.pacientes())
-            model.addRow(new Object[]{p.getIdentificacion(), p.getNombre(), p.getEdad(), p.getNivelTriage(), p.getMotivoIngreso()});
-        count.setText(model.getRowCount() + (model.getRowCount() == 1 ? " paciente registrado" : " pacientes registrados"));
+        for(Paciente p:controller.pacientes())model.addRow(new Object[]{p.getIdentificacion(),p.getNombre(),p.getEdad(),p.getNivelTriage(),p.getMotivoIngreso()});
+        count.setText(model.getRowCount()+(model.getRowCount()==1?" paciente registrado":" pacientes registrados"));
+        refreshCards();
     }
-    static void styleTable(JTable table) {
-        table.setRowHeight(43); table.setFont(new Font(UiColors.FONT, Font.PLAIN, 11));
-        table.setForeground(UiColors.INK); table.setSelectionBackground(UiColors.PRIMARY_SOFT);
-        table.setSelectionForeground(UiColors.INK); table.setGridColor(new Color(239, 243, 249));
-        table.setShowVerticalLines(false); table.setIntercellSpacing(new Dimension(0, 1));
-        table.setFillsViewportHeight(true);
-        table.getTableHeader().setPreferredSize(new Dimension(0, 38));
-        table.getTableHeader().setFont(new Font(UiColors.FONT, Font.BOLD, 10));
-        table.getTableHeader().setBackground(new Color(249, 251, 254));
-        table.getTableHeader().setForeground(UiColors.MUTED);
-        table.getTableHeader().setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, UiColors.BORDER));
+    private void refreshCards(){
+        cardsList.removeAll();
+        String q=search.getText().trim().toLowerCase();
+        List<Paciente> all=controller.pacientes();
+        int shown=0;
+        for(Paciente p:all){
+            String text=(p.getIdentificacion()+" "+p.getNombre()+" "+p.getMotivoIngreso()+" "+p.getNivelTriage()).toLowerCase();
+            if(!q.isEmpty()&&!text.contains(q))continue;
+            UiCard item=new UiCard(14,12);item.setLayout(new BorderLayout(10,0));
+            JPanel identity=new JPanel();identity.setOpaque(false);identity.setLayout(new BoxLayout(identity,BoxLayout.Y_AXIS));
+            JLabel name=new JLabel(p.getNombre());name.setFont(new Font(UiColors.FONT,Font.BOLD,12));name.setForeground(UiColors.INK);
+            JLabel id=new JLabel("ID  "+p.getIdentificacion()+"  ·  "+p.getEdad()+" años");
+            id.setFont(new Font(UiColors.FONT,Font.PLAIN,9));id.setForeground(UiColors.MUTED);
+            JLabel reason=new JLabel(p.getMotivoIngreso());reason.setFont(new Font(UiColors.FONT,Font.PLAIN,10));reason.setForeground(UiColors.MUTED);
+            identity.add(name);identity.add(Box.createVerticalStrut(4));identity.add(id);identity.add(Box.createVerticalStrut(5));identity.add(reason);
+            JLabel triage=new JLabel("T"+p.getNivelTriage(),SwingConstants.CENTER);triage.setOpaque(true);
+            triage.setBackground(p.getNivelTriage()<=2?UiColors.DANGER_SOFT:UiColors.WARNING_SOFT);
+            triage.setForeground(p.getNivelTriage()<=2?UiColors.DANGER:UiColors.WARNING);
+            triage.setFont(new Font(UiColors.FONT,Font.BOLD,10));triage.setPreferredSize(new Dimension(34,30));
+            item.add(identity,BorderLayout.CENTER);item.add(triage,BorderLayout.EAST);
+            item.setMaximumSize(new Dimension(Integer.MAX_VALUE,86));cardsList.add(item);cardsList.add(Box.createVerticalStrut(9));shown++;
+        }
+        if(shown==0){JLabel empty=new JLabel(q.isEmpty()?"Aún no hay pacientes registrados.":"No se encontraron pacientes.");
+            empty.setFont(new Font(UiColors.FONT,Font.PLAIN,11));empty.setForeground(UiColors.MUTED);empty.setBorder(new EmptyBorder(16,4,16,4));cardsList.add(empty);}
+        cardsList.revalidate();cardsList.repaint();
+    }
+    static void styleTable(JTable table){
+        table.setRowHeight(46);table.setFont(new Font(UiColors.FONT,Font.PLAIN,11));table.setForeground(UiColors.INK);
+        table.setSelectionBackground(UiColors.PRIMARY_SOFT);table.setSelectionForeground(UiColors.INK);
+        table.setGridColor(new Color(239,243,249));table.setShowVerticalLines(false);table.setIntercellSpacing(new Dimension(0,1));
+        table.setFillsViewportHeight(true);table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.getTableHeader().setPreferredSize(new Dimension(0,40));table.getTableHeader().setFont(new Font(UiColors.FONT,Font.BOLD,10));
+        table.getTableHeader().setBackground(new Color(249,251,254));table.getTableHeader().setForeground(UiColors.MUTED);
+        table.getTableHeader().setBorder(BorderFactory.createMatteBorder(0,0,1,0,UiColors.BORDER));
     }
 }
