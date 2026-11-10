@@ -110,6 +110,7 @@ public class HabitacionesPage extends JPanel {
                 if (width < 620) { heading.add(titleGroup, BorderLayout.NORTH); heading.add(actions, BorderLayout.SOUTH); }
                 else { heading.add(titleGroup, BorderLayout.CENTER); heading.add(actions, BorderLayout.EAST); }
                 page.revalidate();
+                refresh();
             }
         });
         JScrollPane pageScroll = new JScrollPane(page);
