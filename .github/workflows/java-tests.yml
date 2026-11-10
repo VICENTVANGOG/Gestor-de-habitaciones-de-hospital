@@ -43,6 +43,14 @@ jobs:
           convert target/ui-previews/history-mobile.png -resize 240x520 -quality 28 jpg:- | base64 -w0
           echo
           echo "HISTORY_MOBILE_END"
+          echo "TABLET_DASHBOARD_BEGIN"
+          convert target/ui-previews/dashboard-tablet.png -resize 320x427 -quality 28 jpg:- | base64 -w0
+          echo
+          echo "TABLET_DASHBOARD_END"
+          echo "TABLET_ROOMS_BEGIN"
+          convert target/ui-previews/rooms-tablet.png -resize 320x427 -quality 28 jpg:- | base64 -w0
+          echo
+          echo "TABLET_ROOMS_END"
       - name: Upload UI previews
         uses: actions/upload-artifact@v4
         with:
