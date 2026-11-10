@@ -28,11 +28,11 @@ public final class UiIcon implements Icon {
                 g.drawOval(7,3,6,6);g.drawArc(4,9,13,10,0,180);
             }
             case "habitaciones" -> {
-                g.drawRoundRect(3,6,15,9,2,2);g.drawLine(2.5,11,17.5,11);
-                g.drawRoundRect(4,7,5,3,1,1);g.drawLine(4,14.5,4,17);g.drawLine(16,14.5,16,17);
+                g.drawRoundRect(3,6,15,9,2,2);g.drawLine(3,11,18,11);
+                g.drawRoundRect(4,7,5,3,1,1);g.drawLine(4,15,4,17);g.drawLine(16,15,16,17);
             }
             default -> {
-                g.drawOval(3,3,15,15);g.drawLine(10,5.5,10,10);g.drawLine(10,10,13.5,12);
+                g.drawOval(3,3,15,15);g.drawLine(10,6,10,10);g.drawLine(10,10,14,12);
             }
         }
         g.dispose();
