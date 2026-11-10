@@ -61,7 +61,7 @@ public class PacientesPage extends JPanel {
         cardsScroll=new JScrollPane(cardsList);cardsScroll.setBorder(null);cardsScroll.setOpaque(false);cardsScroll.getViewport().setOpaque(false);
         listing.add(tableScroll,"table");listing.add(cardsScroll,"cards");
         card.add(toolbar,BorderLayout.NORTH);card.add(listing,BorderLayout.CENTER);page.add(card,BorderLayout.CENTER);
-        JScrollPane pageScroll=new JScrollPane(page);pageScroll.setBorder(null);pageScroll.setOpaque(false);pageScroll.getViewport().setOpaque(false);pageScroll.getVerticalScrollBar().setUnitIncrement(16);add(pageScroll,BorderLayout.CENTER);
+        JScrollPane pageScroll=new JScrollPane(page);pageScroll.setBorder(null);pageScroll.setOpaque(false);pageScroll.getViewport().setOpaque(false);pageScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);pageScroll.getVerticalScrollBar().setUnitIncrement(16);add(pageScroll,BorderLayout.CENTER);
         add.getAccessibleContext().setAccessibleName("Registrar paciente");
         add.addActionListener(e->register());
         search.getDocument().addDocumentListener(new javax.swing.event.DocumentListener(){

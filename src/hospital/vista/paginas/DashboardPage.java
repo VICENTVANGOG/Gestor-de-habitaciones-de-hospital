@@ -116,7 +116,7 @@ public class DashboardPage extends JPanel {
             }
         });
         JScrollPane scroll=new JScrollPane(page);scroll.setBorder(null);scroll.setOpaque(false);
-        scroll.getViewport().setOpaque(false);scroll.getVerticalScrollBar().setUnitIncrement(18);
+        scroll.getViewport().setOpaque(false);scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);scroll.getVerticalScrollBar().setUnitIncrement(18);
         add(scroll,BorderLayout.CENTER);
         refresh();
     }
@@ -238,7 +238,7 @@ public class DashboardPage extends JPanel {
                 setLayout(new GridLayout(0,cols,gap,gap));
                 int rows=Math.max(1,(getComponentCount()+cols-1)/cols);
                 int height=rows*cellHeight+Math.max(0,rows-1)*gap;
-                setPreferredSize(new Dimension(900,height));setMaximumSize(new Dimension(Integer.MAX_VALUE,height));
+                setPreferredSize(new Dimension(0,height));setMaximumSize(new Dimension(Integer.MAX_VALUE,height));
                 revalidate();
             }
         }

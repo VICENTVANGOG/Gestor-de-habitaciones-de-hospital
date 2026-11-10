@@ -58,7 +58,7 @@ public class HistorialPage extends JPanel {
         mobileScroll=new JScrollPane(mobileList);mobileScroll.setBorder(null);mobileScroll.setOpaque(false);mobileScroll.getViewport().setOpaque(false);
         listing.add(tableScroll,"table");listing.add(mobileScroll,"mobile");
         card.add(toolbar,BorderLayout.NORTH);card.add(listing,BorderLayout.CENTER);page.add(card,BorderLayout.CENTER);
-        JScrollPane pageScroll=new JScrollPane(page);pageScroll.setBorder(null);pageScroll.setOpaque(false);pageScroll.getViewport().setOpaque(false);pageScroll.getVerticalScrollBar().setUnitIncrement(16);add(pageScroll,BorderLayout.CENTER);
+        JScrollPane pageScroll=new JScrollPane(page);pageScroll.setBorder(null);pageScroll.setOpaque(false);pageScroll.getViewport().setOpaque(false);pageScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);pageScroll.getVerticalScrollBar().setUnitIncrement(16);add(pageScroll,BorderLayout.CENTER);
         refresh.addActionListener(e->refresh());
         search.getDocument().addDocumentListener(new javax.swing.event.DocumentListener(){
             private void filter(){String q=search.getText().trim();sorter.setRowFilter(q.isEmpty()?null:RowFilter.regexFilter("(?i)"+java.util.regex.Pattern.quote(q)));refreshMobile();}

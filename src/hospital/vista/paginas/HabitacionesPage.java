@@ -122,6 +122,7 @@ public class HabitacionesPage extends JPanel {
         pageScroll.setBorder(null);
         pageScroll.setOpaque(false);
         pageScroll.getViewport().setOpaque(false);
+        pageScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         pageScroll.getVerticalScrollBar().setUnitIncrement(16);
         add(pageScroll, BorderLayout.CENTER);
 
