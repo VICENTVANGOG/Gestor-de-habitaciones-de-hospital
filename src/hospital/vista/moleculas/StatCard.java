@@ -5,26 +5,44 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-/** Molécula visual reutilizable para indicadores del dashboard. */
+/** Molécula de indicador con icono, cifra y descripción. */
 public class StatCard extends JPanel {
     private final JLabel value = new JLabel("—");
     private final JLabel detail = new JLabel(" ");
-
+    private final JLabel icon = new JLabel("●", SwingConstants.CENTER);
     public StatCard(String title, Color accent) {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBackground(UiColors.WHITE);
-        setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(UiColors.BORDER),
-                new EmptyBorder(18, 20, 18, 20)));
+        setOpaque(false);
+        setLayout(new BorderLayout(8, 8));
+        setBorder(new EmptyBorder(15, 16, 14, 16));
+        JPanel top = new JPanel(new BorderLayout());
+        top.setOpaque(false);
         JLabel heading = new JLabel(title);
-        heading.setFont(new Font(UiColors.FONT, Font.BOLD, 13));
+        heading.setFont(new Font(UiColors.FONT, Font.BOLD, 11));
         heading.setForeground(UiColors.MUTED);
-        value.setFont(new Font(UiColors.FONT, Font.BOLD, 30));
-        value.setForeground(accent);
-        detail.setFont(new Font(UiColors.FONT, Font.PLAIN, 12));
+        icon.setOpaque(true);
+        icon.setBackground(new Color(accent.getRed(), accent.getGreen(), accent.getBlue(), 22));
+        icon.setForeground(accent);
+        icon.setFont(new Font(UiColors.FONT, Font.BOLD, 15));
+        icon.setPreferredSize(new Dimension(34, 34));
+        top.add(heading, BorderLayout.CENTER);
+        top.add(icon, BorderLayout.EAST);
+        value.setFont(new Font(UiColors.FONT, Font.BOLD, 29));
+        value.setForeground(UiColors.INK);
+        detail.setFont(new Font(UiColors.FONT, Font.PLAIN, 10));
         detail.setForeground(UiColors.MUTED);
-        add(heading); add(Box.createVerticalStrut(12)); add(value);
-        add(Box.createVerticalStrut(5)); add(detail);
+        add(top, BorderLayout.NORTH);
+        add(value, BorderLayout.CENTER);
+        add(detail, BorderLayout.SOUTH);
+    }
+    @Override protected void paintComponent(Graphics graphics) {
+        Graphics2D g = (Graphics2D) graphics.create();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setColor(UiColors.WHITE);
+        g.fillRoundRect(0, 0, getWidth()-1, getHeight()-1, 16, 16);
+        g.setColor(UiColors.BORDER);
+        g.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, 16, 16);
+        g.dispose();
+        super.paintComponent(graphics);
     }
     public void setValue(String text, String description) {
         value.setText(text);

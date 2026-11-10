@@ -2,132 +2,158 @@ package hospital.vista.paginas;
 
 import hospital.controlador.HospitalController;
 import hospital.modelos.Habitacion;
-import hospital.vista.atomos.UiColors;
+import hospital.modelos.RegistroHistorial;
+import hospital.vista.atomos.*;
 import hospital.vista.moleculas.StatCard;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-/** Dashboard clínico inspirado en Hospitalize; métricas derivadas del modelo real. */
+/** Dashboard dinámico: solo muestra información disponible en el modelo académico. */
 public class DashboardPage extends JPanel {
     private final HospitalController controller;
-    private final StatCard total = new StatCard("Habitaciones totales", UiColors.PRIMARY);
-    private final StatCard occupied = new StatCard("Habitaciones ocupadas", UiColors.DANGER);
-    private final StatCard available = new StatCard("Habitaciones disponibles", UiColors.TEAL);
-    private final StatCard occupancy = new StatCard("Ocupación actual", UiColors.INFO);
-    private final JLabel summary = new JLabel();
-    private final JProgressBar progress = new JProgressBar(0, 100);
-    private final JPanel floorRows = new JPanel();
+    private final StatCard patients = new StatCard("PACIENTES REGISTRADOS", UiColors.PRIMARY);
+    private final StatCard occupied = new StatCard("HABITACIONES OCUPADAS", UiColors.DANGER);
+    private final StatCard available = new StatCard("HABITACIONES DISPONIBLES", UiColors.TEAL);
+    private final StatCard occupancy = new StatCard("OCUPACIÓN ACTUAL", UiColors.INFO);
+    private final JPanel floors = new JPanel();
+    private final JPanel rooms = new JPanel(new GridLayout(5, 6, 7, 7));
+    private final JPanel activity = new JPanel();
+    private final JLabel occupancyText = new JLabel();
+    private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("dd MMM · HH:mm");
 
     public DashboardPage(HospitalController controller) {
         this.controller = controller;
-        setLayout(new BorderLayout(0, 22));
-        setBackground(UiColors.BACKGROUND);
-        setBorder(new EmptyBorder(24, 26, 26, 26));
+        setLayout(new BorderLayout());
+        setOpaque(false);
+        JPanel page = new JPanel();
+        page.setOpaque(false);
+        page.setBorder(new EmptyBorder(16, 30, 28, 30));
+        page.setLayout(new BoxLayout(page, BoxLayout.Y_AXIS));
 
         JPanel intro = new JPanel();
         intro.setOpaque(false);
         intro.setLayout(new BoxLayout(intro, BoxLayout.Y_AXIS));
-        JLabel eyebrow = new JLabel("RESUMEN DEL DÍA");
+        JLabel eyebrow = new JLabel("RESUMEN DEL DÍA  ·  GESTIÓN HOSPITALARIA");
+        eyebrow.setFont(new Font(UiColors.FONT, Font.BOLD, 9));
         eyebrow.setForeground(UiColors.PRIMARY);
-        eyebrow.setFont(new Font(UiColors.FONT, Font.BOLD, 11));
-        JLabel title = new JLabel("Resumen general");
-        title.setForeground(UiColors.INK);
-        title.setFont(new Font(UiColors.FONT, Font.BOLD, 27));
-        JLabel subtitle = new JLabel("Estado actualizado de pacientes y habitaciones del hospital.");
+        JLabel heading = new JLabel("Estado general del hospital");
+        heading.setFont(new Font(UiColors.FONT, Font.BOLD, 27));
+        heading.setForeground(UiColors.INK);
+        JLabel subtitle = new JLabel("Consulta en tiempo real la ocupación y los movimientos de pacientes.");
+        subtitle.setFont(new Font(UiColors.FONT, Font.PLAIN, 12));
         subtitle.setForeground(UiColors.MUTED);
-        subtitle.setFont(new Font(UiColors.FONT, Font.PLAIN, 13));
         intro.add(eyebrow); intro.add(Box.createVerticalStrut(8));
-        intro.add(title); intro.add(Box.createVerticalStrut(6)); intro.add(subtitle);
-        add(intro, BorderLayout.NORTH);
+        intro.add(heading); intro.add(Box.createVerticalStrut(5)); intro.add(subtitle);
+        page.add(intro); page.add(Box.createVerticalStrut(22));
 
-        JPanel content = new JPanel();
-        content.setOpaque(false);
-        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
-        JPanel metrics = new JPanel(new GridLayout(1, 4, 14, 0));
+        JPanel metrics = new JPanel(new GridLayout(1, 4, 13, 0));
         metrics.setOpaque(false);
-        metrics.add(total); metrics.add(occupied); metrics.add(available); metrics.add(occupancy);
-        content.add(metrics);
-        content.add(Box.createVerticalStrut(18));
+        metrics.add(patients); metrics.add(occupied); metrics.add(available); metrics.add(occupancy);
+        metrics.setMaximumSize(new Dimension(Integer.MAX_VALUE, 132));
+        page.add(metrics); page.add(Box.createVerticalStrut(18));
 
-        JPanel status = cardPanel();
-        status.setLayout(new BorderLayout(0, 14));
-        JLabel statusTitle = sectionTitle("Estado de camas");
-        status.add(statusTitle, BorderLayout.NORTH);
-        JPanel statusBody = new JPanel(new BorderLayout(0, 8));
-        statusBody.setOpaque(false);
-        summary.setFont(new Font(UiColors.FONT, Font.PLAIN, 13));
-        summary.setForeground(UiColors.MUTED);
-        progress.setStringPainted(true);
-        progress.setFont(new Font(UiColors.FONT, Font.BOLD, 12));
-        progress.setForeground(UiColors.PRIMARY);
-        progress.setBackground(UiColors.BORDER);
-        progress.setBorderPainted(false);
-        statusBody.add(summary, BorderLayout.NORTH);
-        statusBody.add(progress, BorderLayout.CENTER);
-        status.add(statusBody, BorderLayout.CENTER);
-        content.add(status);
-        content.add(Box.createVerticalStrut(18));
+        JPanel middle = new JPanel(new GridLayout(1, 2, 14, 0));
+        middle.setOpaque(false);
+        UiCard floorCard = new UiCard(16, 17);
+        floorCard.setLayout(new BorderLayout(0, 14));
+        floorCard.add(section("Ocupación por piso", "Distribución de camas ocupadas"), BorderLayout.NORTH);
+        floors.setOpaque(false); floors.setLayout(new BoxLayout(floors, BoxLayout.Y_AXIS));
+        floorCard.add(floors, BorderLayout.CENTER);
+        UiCard mapCard = new UiCard(16, 17);
+        mapCard.setLayout(new BorderLayout(0, 12));
+        mapCard.add(section("Mapa de habitaciones", "Estado de las 30 habitaciones"), BorderLayout.NORTH);
+        rooms.setOpaque(false);
+        mapCard.add(rooms, BorderLayout.CENTER);
+        middle.add(floorCard); middle.add(mapCard);
+        middle.setMaximumSize(new Dimension(Integer.MAX_VALUE, 300));
+        page.add(middle); page.add(Box.createVerticalStrut(18));
 
-        JPanel floors = cardPanel();
-        floors.setLayout(new BorderLayout(0, 12));
-        floors.add(sectionTitle("Ocupación por piso"), BorderLayout.NORTH);
-        floorRows.setOpaque(false);
-        floorRows.setLayout(new BoxLayout(floorRows, BoxLayout.Y_AXIS));
-        floors.add(floorRows, BorderLayout.CENTER);
-        content.add(floors);
-        add(content, BorderLayout.CENTER);
+        UiCard activityCard = new UiCard(16, 16);
+        activityCard.setLayout(new BorderLayout(0, 12));
+        activityCard.add(section("Actividad reciente", "Últimos ingresos y salidas registrados"), BorderLayout.NORTH);
+        activity.setOpaque(false); activity.setLayout(new BoxLayout(activity, BoxLayout.Y_AXIS));
+        activityCard.add(activity, BorderLayout.CENTER);
+        activityCard.setPreferredSize(new Dimension(900, 205));
+        page.add(activityCard);
+
+        JScrollPane scroll = new JScrollPane(page);
+        scroll.setBorder(null);
+        scroll.setOpaque(false);
+        scroll.getViewport().setOpaque(false);
+        scroll.getVerticalScrollBar().setUnitIncrement(18);
+        add(scroll, BorderLayout.CENTER);
         refresh();
     }
-
-    private JPanel cardPanel() {
+    private JPanel section(String title, String subtitle) {
         JPanel p = new JPanel();
-        p.setOpaque(true);
-        p.setBackground(UiColors.WHITE);
-        p.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(UiColors.BORDER), new EmptyBorder(18, 20, 18, 20)));
+        p.setOpaque(false); p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+        JLabel t = new JLabel(title); t.setFont(new Font(UiColors.FONT, Font.BOLD, 14)); t.setForeground(UiColors.INK);
+        JLabel s = new JLabel(subtitle); s.setFont(new Font(UiColors.FONT, Font.PLAIN, 10)); s.setForeground(UiColors.MUTED);
+        p.add(t); p.add(Box.createVerticalStrut(4)); p.add(s);
         return p;
     }
-    private JLabel sectionTitle(String text) {
-        JLabel l = new JLabel(text);
-        l.setFont(new Font(UiColors.FONT, Font.BOLD, 16));
-        l.setForeground(UiColors.INK);
-        return l;
-    }
-
     public void refresh() {
-        List<Habitacion> rooms = controller.habitaciones();
-        int used = (int) rooms.stream().filter(Habitacion::isOcupada).count();
-        int free = rooms.size() - used;
-        int percent = rooms.isEmpty() ? 0 : (int) Math.round(used * 100.0 / rooms.size());
-        total.setValue(String.valueOf(rooms.size()), "Capacidad instalada");
-        occupied.setValue(String.valueOf(used), "Camas en uso");
-        available.setValue(String.valueOf(free), "Disponibles ahora");
-        occupancy.setValue(percent + "%", "Porcentaje de ocupación");
-        summary.setText(used + " de " + rooms.size() + " habitaciones ocupadas · " + free + " disponibles");
-        progress.setValue(percent);
-        progress.setString(percent + "% ocupado");
-        floorRows.removeAll();
+        List<Habitacion> all = controller.habitaciones();
+        int used = (int) all.stream().filter(Habitacion::isOcupada).count();
+        int free = all.size() - used;
+        int pct = all.isEmpty() ? 0 : (int)Math.round(used * 100.0 / all.size());
+        patients.setValue(String.valueOf(controller.pacientes().size()), "Registros en el sistema");
+        occupied.setValue(String.valueOf(used), "Camas actualmente en uso");
+        available.setValue(String.valueOf(free), "Disponibles para asignación");
+        occupancy.setValue(pct + "%", "Nivel de ocupación");
+        floors.removeAll();
         for (int floor = 1; floor <= 5; floor++) {
-            final int currentFloor = floor;
-            long floorUsed = rooms.stream().filter(h -> h.getPiso() == currentFloor && h.isOcupada()).count();
-            JPanel row = new JPanel(new BorderLayout(12, 0));
-            row.setOpaque(false);
-            JLabel label = new JLabel("Piso " + floor + "  ·  " + floorUsed + "/6");
-            label.setPreferredSize(new Dimension(120, 28));
-            label.setFont(new Font(UiColors.FONT, Font.PLAIN, 13));
-            label.setForeground(UiColors.INK);
-            JProgressBar bar = new JProgressBar(0, 6);
-            bar.setValue((int) floorUsed);
-            bar.setStringPainted(false);
-            bar.setForeground(UiColors.TEAL);
-            bar.setBackground(UiColors.BORDER);
-            row.add(label, BorderLayout.WEST); row.add(bar, BorderLayout.CENTER);
+            final int f = floor;
+            long count = all.stream().filter(h -> h.getPiso() == f && h.isOcupada()).count();
+            JPanel row = new JPanel(new BorderLayout(10, 0)); row.setOpaque(false);
+            JLabel name = new JLabel("Piso " + floor);
+            name.setFont(new Font(UiColors.FONT, Font.BOLD, 11)); name.setForeground(UiColors.INK);
+            JLabel number = new JLabel(count + " / 6"); number.setFont(new Font(UiColors.FONT, Font.BOLD, 10)); number.setForeground(UiColors.MUTED);
+            JProgressBar bar = new JProgressBar(0, 6); bar.setValue((int)count); bar.setStringPainted(false);
+            bar.setForeground(UiColors.TEAL); bar.setBackground(UiColors.TEAL_SOFT); bar.setBorderPainted(false);
+            JPanel center = new JPanel(new BorderLayout(0, 5)); center.setOpaque(false);
+            center.add(bar, BorderLayout.CENTER);
+            row.add(name, BorderLayout.WEST); row.add(center, BorderLayout.CENTER); row.add(number, BorderLayout.EAST);
             row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 32));
-            floorRows.add(row);
-            floorRows.add(Box.createVerticalStrut(8));
+            floors.add(row); floors.add(Box.createVerticalStrut(13));
         }
-        floorRows.revalidate(); floorRows.repaint();
+        rooms.removeAll();
+        for (Habitacion h : all) {
+            boolean busy = h.isOcupada();
+            JLabel tile = new JLabel("<html><center><b>" + h.getNumero() + "</b><br><font size='2'>" +
+                    (busy ? "Ocupada" : "Libre") + "</font></center></html>", SwingConstants.CENTER);
+            tile.setOpaque(true);
+            tile.setBackground(busy ? UiColors.DANGER_SOFT : UiColors.TEAL_SOFT);
+            tile.setForeground(busy ? UiColors.DANGER : new Color(24, 139, 115));
+            tile.setFont(new Font(UiColors.FONT, Font.PLAIN, 10));
+            tile.setBorder(BorderFactory.createLineBorder(busy ? new Color(249, 216, 220) : new Color(204, 239, 229)));
+            rooms.add(tile);
+        }
+        activity.removeAll();
+        List<RegistroHistorial> records = controller.historial();
+        int start = Math.max(0, records.size() - 4);
+        if (records.isEmpty()) {
+            JLabel empty = new JLabel("Aún no hay movimientos registrados.");
+            empty.setFont(new Font(UiColors.FONT, Font.PLAIN, 11)); empty.setForeground(UiColors.MUTED);
+            activity.add(empty);
+        } else {
+            for (int i = records.size() - 1; i >= start; i--) {
+                RegistroHistorial r = records.get(i);
+                JPanel line = new JPanel(new BorderLayout(12, 0)); line.setOpaque(false);
+                JLabel dot = new JLabel("●"); dot.setForeground("Ingreso".equalsIgnoreCase(r.getAccion()) ? UiColors.TEAL : UiColors.WARNING);
+                JLabel description = new JLabel("<html><b>" + r.getNombrePaciente() + "</b> · " + r.getAccion() +
+                        " · Habitación " + r.getNumeroHabitacion() + "</html>");
+                description.setFont(new Font(UiColors.FONT, Font.PLAIN, 11)); description.setForeground(UiColors.INK);
+                JLabel time = new JLabel(r.getFechaHora().format(DATE));
+                time.setFont(new Font(UiColors.FONT, Font.PLAIN, 10)); time.setForeground(UiColors.MUTED);
+                line.add(dot, BorderLayout.WEST); line.add(description, BorderLayout.CENTER); line.add(time, BorderLayout.EAST);
+                line.setBorder(new EmptyBorder(7, 0, 7, 0));
+                activity.add(line);
+            }
+        }
+        floors.revalidate(); floors.repaint(); rooms.revalidate(); rooms.repaint(); activity.revalidate(); activity.repaint();
     }
 }
