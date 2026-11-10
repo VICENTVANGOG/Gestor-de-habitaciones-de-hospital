@@ -201,7 +201,7 @@ public class DashboardPage extends JPanel {
         }
         priorityRows.removeAll();
         Set<String> assigned=rooms.stream().filter(Habitacion::isOcupada).map(r->r.getPaciente().getIdentificacion()).collect(Collectors.toSet());
-        List<Paciente> priorities=controller.pacientes().stream().sorted(Comparator.comparingInt(Paciente::getNivelTriage)).limit(4).collect(Collectors.toList());
+        List<Paciente> priorities=controller.pacientes().stream().filter(p->p.getNivelTriage()<=2).sorted(Comparator.comparingInt(Paciente::getNivelTriage)).limit(4).collect(Collectors.toList());
         if(priorities.isEmpty())addEmpty(priorityRows,"Aún no hay pacientes registrados.");
         else for(Paciente p:priorities)addPriorityRow(p,assigned.contains(p.getIdentificacion()));
         activityRows.removeAll();
