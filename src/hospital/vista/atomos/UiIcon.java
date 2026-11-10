@@ -22,17 +22,17 @@ public final class UiIcon implements Icon {
         switch(type){
             case "dashboard" -> {
                 Path2D roof=new Path2D.Double();roof.moveTo(2.5,9);roof.lineTo(10,2.5);roof.lineTo(17.5,9);
-                g.draw(roof);g.drawRoundRect(5,8,10,9,1.5,1.5);g.drawLine(9,17,9,12);g.drawLine(11,17,11,12);
+                g.draw(roof);g.drawRoundRect(5,8,10,9,2,2);g.drawLine(9,17,9,12);g.drawLine(11,17,11,12);
             }
             case "pacientes" -> {
-                g.drawOval(7,2.5,6,6);g.drawArc(3.5,9,13,10,0,180);
+                g.drawOval(7,3,6,6);g.drawArc(4,9,13,10,0,180);
             }
             case "habitaciones" -> {
-                g.drawRoundRect(2.5,5.5,15,9,1.2,1.2);g.drawLine(2.5,11,17.5,11);
-                g.drawRoundRect(4,7,4.5,3,1,1);g.drawLine(4,14.5,4,17);g.drawLine(16,14.5,16,17);
+                g.drawRoundRect(3,6,15,9,2,2);g.drawLine(2.5,11,17.5,11);
+                g.drawRoundRect(4,7,5,3,1,1);g.drawLine(4,14.5,4,17);g.drawLine(16,14.5,16,17);
             }
             default -> {
-                g.drawOval(2.5,2.5,15,15);g.drawLine(10,5.5,10,10);g.drawLine(10,10,13.5,12);
+                g.drawOval(3,3,15,15);g.drawLine(10,5.5,10,10);g.drawLine(10,10,13.5,12);
             }
         }
         g.dispose();
