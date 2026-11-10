@@ -20,7 +20,7 @@ public class HistorialPage extends JPanel {
     };
     private final JTable table=new JTable(model);
     private final TableRowSorter<DefaultTableModel> sorter=new TableRowSorter<>(model);
-    private final JTextField search=new JTextField();
+    private final UiSearchField search=new UiSearchField("Buscar por paciente, documento o movimiento…",240);
     private final JLabel count=new JLabel();
     private final JPanel page=new ScrollablePanel(new BorderLayout(0,18));
     private final JPanel heading=new JPanel(new BorderLayout(10,0));
@@ -39,7 +39,7 @@ public class HistorialPage extends JPanel {
         JLabel subtitle=new JLabel("<html>Registro cronológico de ingresos y salidas<br>de pacientes.</html>");
         subtitle.setFont(new Font(UiColors.FONT,Font.PLAIN,11));subtitle.setForeground(UiColors.MUTED);
         labels.add(eyebrow);labels.add(Box.createVerticalStrut(7));labels.add(title);labels.add(Box.createVerticalStrut(4));labels.add(subtitle);
-        UiButton refresh=new UiButton("Actualizar",false);heading.setOpaque(false);
+        UiButton refresh=new UiButton("Actualizar",false);refresh.setIcon(new UiIcon("refresh",UiColors.MUTED,14));refresh.setIconTextGap(7);refresh.setFont(new Font(UiColors.FONT,Font.BOLD,10));refresh.setPreferredSize(new Dimension(112,37));heading.setOpaque(false);
         heading.add(labels,BorderLayout.CENTER);heading.add(refresh,BorderLayout.EAST);page.add(heading,BorderLayout.NORTH);
 
         UiCard card=new UiCard(18,18);card.setLayout(new BorderLayout(0,14));toolbar.setOpaque(false);
@@ -47,12 +47,12 @@ public class HistorialPage extends JPanel {
         count.setFont(new Font(UiColors.FONT,Font.PLAIN,9));count.setForeground(UiColors.MUTED);
         JPanel titleBox=new JPanel();titleBox.setOpaque(false);titleBox.setLayout(new BoxLayout(titleBox,BoxLayout.Y_AXIS));
         titleBox.add(tableTitle);titleBox.add(Box.createVerticalStrut(4));titleBox.add(count);
-        search.setFont(new Font(UiColors.FONT,Font.PLAIN,11));search.setPreferredSize(new Dimension(220,36));
-        search.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(UiColors.BORDER),new EmptyBorder(7,10,7,10)));
+        search.setPreferredSize(new Dimension(240,40));
         toolbar.add(titleBox,BorderLayout.WEST);toolbar.add(search,BorderLayout.EAST);
 
-        PacientesPage.styleTable(table);table.setRowSorter(sorter);tableScroll=new JScrollPane(table);tableScroll.setBorder(BorderFactory.createLineBorder(UiColors.BORDER));
-        tableScroll.getViewport().setBackground(Color.WHITE);
+        PacientesPage.styleTable(table);table.setRowSorter(sorter);
+        table.getColumnModel().getColumn(1).setCellRenderer(new MovementRenderer());tableScroll=new JScrollPane(table);tableScroll.setBorder(null);
+        tableScroll.getViewport().setBackground(Color.WHITE);tableScroll.getViewport().setBorder(new EmptyBorder(2,0,0,0));
         mobileList.setOpaque(false);mobileList.setLayout(new BoxLayout(mobileList,BoxLayout.Y_AXIS));
         listing.add(tableScroll,BorderLayout.CENTER);
         card.add(toolbar,BorderLayout.NORTH);card.add(listing,BorderLayout.CENTER);page.add(card,BorderLayout.CENTER);
@@ -72,12 +72,23 @@ public class HistorialPage extends JPanel {
                 if(narrow){heading.add(labels,BorderLayout.NORTH);heading.add(refresh,BorderLayout.SOUTH);}
                 else{heading.add(labels,BorderLayout.CENTER);heading.add(refresh,BorderLayout.EAST);}
                 toolbar.setLayout(new BorderLayout(8,narrow?10:0));
-                if(narrow){toolbar.add(titleBox,BorderLayout.NORTH);toolbar.add(search,BorderLayout.SOUTH);search.setPreferredSize(new Dimension(0,38));}
-                else{toolbar.add(titleBox,BorderLayout.WEST);toolbar.add(search,BorderLayout.EAST);search.setPreferredSize(new Dimension(220,36));}
+                if(narrow){toolbar.add(titleBox,BorderLayout.NORTH);toolbar.add(search,BorderLayout.SOUTH);search.setPreferredSize(new Dimension(0,40));}
+                else{toolbar.add(titleBox,BorderLayout.WEST);toolbar.add(search,BorderLayout.EAST);search.setPreferredSize(new Dimension(240,40));}
                 listing.removeAll();listing.add(narrow?mobileList:tableScroll,BorderLayout.CENTER);listing.revalidate();page.revalidate();
             }
         });
         refresh();
+    }
+    private static class MovementRenderer extends javax.swing.table.DefaultTableCellRenderer {
+        MovementRenderer(){setHorizontalAlignment(SwingConstants.CENTER);}
+        @Override public Component getTableCellRendererComponent(JTable table,Object value,boolean selected,boolean focus,int row,int col){
+            super.getTableCellRendererComponent(table,value,selected,focus,row,col);
+            boolean entry="INGRESO".equalsIgnoreCase(String.valueOf(value));
+            setText(entry?"INGRESO":"SALIDA");setOpaque(true);setFont(new Font(UiColors.FONT,Font.BOLD,9));
+            setHorizontalAlignment(SwingConstants.CENTER);setForeground(entry?UiColors.TEAL:UiColors.WARNING);
+            setBackground(selected?UiColors.PRIMARY_SOFT:entry?UiColors.TEAL_SOFT:UiColors.WARNING_SOFT);
+            setBorder(new EmptyBorder(5,7,5,7));return this;
+        }
     }
     public void refresh(){
         model.setRowCount(0);

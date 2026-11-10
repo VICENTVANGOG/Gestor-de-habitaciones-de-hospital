@@ -21,6 +21,8 @@ public final class UiIcon implements Icon {
             case "habitaciones" -> {g.drawRoundRect(2,6,15,9,2,2);g.drawLine(2,11,18,11);g.drawRoundRect(4,7,5,3,1,1);g.drawLine(4,15,4,18);g.drawLine(16,15,16,18);}
             case "historial" -> {g.drawOval(2,2,15,15);g.drawLine(10,6,10,10);g.drawLine(10,10,14,12);g.drawLine(2,5,5,5);}
             case "search" -> {g.drawOval(2,2,11,11);g.drawLine(12,12,18,18);}
+            case "clock" -> {g.drawOval(2,2,16,16);g.drawLine(10,5,10,10);g.drawLine(10,10,14,12);}
+            case "refresh" -> {g.drawArc(3,3,14,14,35,285);g.drawLine(15,3,18,4);g.drawLine(18,4,18,8);}
             case "plus" -> {g.drawRoundRect(2,2,15,15,4,4);g.drawLine(10,6,10,14);g.drawLine(6,10,14,10);}
             case "close" -> {g.drawLine(5,5,15,15);g.drawLine(15,5,5,15);}
             case "check" -> {g.drawLine(3,10,8,15);g.drawLine(8,15,17,5);}

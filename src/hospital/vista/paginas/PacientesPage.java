@@ -19,7 +19,7 @@ public class PacientesPage extends JPanel {
     };
     private final JTable table=new JTable(model);
     private final TableRowSorter<DefaultTableModel> sorter=new TableRowSorter<>(model);
-    private final JTextField search=new JTextField();
+    private final UiSearchField search=new UiSearchField("Buscar por nombre, identificación o motivo…",250);
     private final JLabel count=new JLabel("0 pacientes");
     private final JPanel page=new ScrollablePanel(new BorderLayout(0,18));
     private final JPanel heading=new JPanel(new BorderLayout(12,0));
@@ -39,7 +39,9 @@ public class PacientesPage extends JPanel {
         JLabel subtitle=new JLabel("<html>Consulta y administra los registros de pacientes<br>hospitalizados.</html>");
         subtitle.setFont(new Font(UiColors.FONT,Font.PLAIN,11));subtitle.setForeground(UiColors.MUTED);
         labels.add(eyebrow);labels.add(Box.createVerticalStrut(7));labels.add(title);labels.add(Box.createVerticalStrut(4));labels.add(subtitle);
-        UiButton add=new UiButton("+  Registrar paciente");
+        UiButton add=new UiButton("Registrar paciente");
+        add.setIcon(new UiIcon("plus",Color.WHITE,15));add.setIconTextGap(7);add.setFont(new Font(UiColors.FONT,Font.BOLD,11));
+        add.setPreferredSize(new Dimension(164,39));add.setMinimumSize(new Dimension(164,39));
         heading.add(labels,BorderLayout.CENTER);heading.add(add,BorderLayout.EAST);page.add(heading,BorderLayout.NORTH);
 
         UiCard card=new UiCard(18,18);card.setLayout(new BorderLayout(0,14));
@@ -48,14 +50,13 @@ public class PacientesPage extends JPanel {
         count.setFont(new Font(UiColors.FONT,Font.PLAIN,9));count.setForeground(UiColors.MUTED);
         JPanel titleBox=new JPanel();titleBox.setOpaque(false);titleBox.setLayout(new BoxLayout(titleBox,BoxLayout.Y_AXIS));
         titleBox.add(tableTitle);titleBox.add(Box.createVerticalStrut(4));titleBox.add(count);
-        search.setFont(new Font(UiColors.FONT,Font.PLAIN,11));search.setPreferredSize(new Dimension(240,36));
-        search.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(UiColors.BORDER),new EmptyBorder(7,10,7,10)));
-        search.setToolTipText("Buscar por identificación, nombre o motivo");
+        search.setPreferredSize(new Dimension(250,40));
         toolbar.add(titleBox,BorderLayout.WEST);toolbar.add(search,BorderLayout.EAST);
 
         table.setRowSorter(sorter);styleTable(table);
-        tableScroll=new JScrollPane(table);tableScroll.setBorder(BorderFactory.createLineBorder(UiColors.BORDER));
-        tableScroll.getViewport().setBackground(Color.WHITE);tableScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        table.getColumnModel().getColumn(3).setCellRenderer(new TriageRenderer());
+        tableScroll=new JScrollPane(table);tableScroll.setBorder(null);
+        tableScroll.getViewport().setBackground(Color.WHITE);tableScroll.getViewport().setBorder(new EmptyBorder(2,0,0,0));tableScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         cardsList.setOpaque(false);cardsList.setLayout(new BoxLayout(cardsList,BoxLayout.Y_AXIS));
         listing.add(tableScroll,BorderLayout.CENTER);
         card.add(toolbar,BorderLayout.NORTH);card.add(listing,BorderLayout.CENTER);page.add(card,BorderLayout.CENTER);
@@ -80,8 +81,8 @@ public class PacientesPage extends JPanel {
                 if(narrow){heading.add(labels,BorderLayout.NORTH);heading.add(add,BorderLayout.SOUTH);}
                 else{heading.add(labels,BorderLayout.CENTER);heading.add(add,BorderLayout.EAST);}
                 toolbar.setLayout(new BorderLayout(8,narrow?10:0));
-                if(narrow){toolbar.add(titleBox,BorderLayout.NORTH);toolbar.add(search,BorderLayout.SOUTH);search.setPreferredSize(new Dimension(0,38));}
-                else{toolbar.add(titleBox,BorderLayout.WEST);toolbar.add(search,BorderLayout.EAST);search.setPreferredSize(new Dimension(240,36));}
+                if(narrow){toolbar.add(titleBox,BorderLayout.NORTH);toolbar.add(search,BorderLayout.SOUTH);search.setPreferredSize(new Dimension(0,40));}
+                else{toolbar.add(titleBox,BorderLayout.WEST);toolbar.add(search,BorderLayout.EAST);search.setPreferredSize(new Dimension(250,40));}
                 listing.removeAll();listing.add(narrow?cardsList:tableScroll,BorderLayout.CENTER);listing.revalidate();
                 page.revalidate();
             }
@@ -140,13 +141,37 @@ public class PacientesPage extends JPanel {
             empty.setFont(new Font(UiColors.FONT,Font.PLAIN,11));empty.setForeground(UiColors.MUTED);empty.setBorder(new EmptyBorder(16,4,16,4));cardsList.add(empty);}
         cardsList.revalidate();cardsList.repaint();
     }
+    private static class TriageRenderer extends javax.swing.table.DefaultTableCellRenderer {
+        TriageRenderer(){setHorizontalAlignment(SwingConstants.CENTER);}
+        @Override public Component getTableCellRendererComponent(JTable table,Object value,boolean selected,boolean focus,int row,int col){
+            super.getTableCellRendererComponent(table,value,selected,focus,row,col);
+            int triage=Integer.parseInt(String.valueOf(value));setText("Triage "+triage);
+            setOpaque(true);setHorizontalAlignment(SwingConstants.CENTER);setFont(new Font(UiColors.FONT,Font.BOLD,9));
+            boolean urgent=triage<=2;setBackground(selected?UiColors.PRIMARY_SOFT:urgent?UiColors.DANGER_SOFT:UiColors.WARNING_SOFT);
+            setForeground(urgent?UiColors.DANGER:UiColors.WARNING);setBorder(new EmptyBorder(5,7,5,7));return this;
+        }
+    }
     static void styleTable(JTable table){
-        table.setRowHeight(46);table.setFont(new Font(UiColors.FONT,Font.PLAIN,11));table.setForeground(UiColors.INK);
+        table.setRowHeight(48);table.setFont(new Font(UiColors.FONT,Font.PLAIN,11));table.setForeground(UiColors.INK);
         table.setSelectionBackground(UiColors.PRIMARY_SOFT);table.setSelectionForeground(UiColors.INK);
-        table.setGridColor(new Color(239,243,249));table.setShowVerticalLines(false);table.setIntercellSpacing(new Dimension(0,1));
+        table.setGridColor(new Color(244,247,251));table.setShowVerticalLines(false);table.setShowHorizontalLines(true);table.setIntercellSpacing(new Dimension(0,0));
         table.setFillsViewportHeight(true);table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.getTableHeader().setPreferredSize(new Dimension(0,40));table.getTableHeader().setFont(new Font(UiColors.FONT,Font.BOLD,10));
         table.getTableHeader().setBackground(new Color(249,251,254));table.getTableHeader().setForeground(UiColors.MUTED);
         table.getTableHeader().setBorder(BorderFactory.createMatteBorder(0,0,1,0,UiColors.BORDER));
+        table.getTableHeader().setReorderingAllowed(false);
+        javax.swing.table.DefaultTableCellRenderer header=new javax.swing.table.DefaultTableCellRenderer(){
+            @Override public Component getTableCellRendererComponent(JTable t,Object value,boolean selected,boolean focus,int row,int col){
+                super.getTableCellRendererComponent(t,value,selected,focus,row,col);setHorizontalAlignment(SwingConstants.LEFT);
+                setBorder(new EmptyBorder(0,12,0,8));setFont(new Font(UiColors.FONT,Font.BOLD,9));setForeground(UiColors.MUTED);setBackground(new Color(249,251,254));return this;
+            }};
+        table.getTableHeader().setDefaultRenderer(header);
+        javax.swing.table.DefaultTableCellRenderer body=new javax.swing.table.DefaultTableCellRenderer(){
+            @Override public Component getTableCellRendererComponent(JTable t,Object value,boolean selected,boolean focus,int row,int col){
+                super.getTableCellRendererComponent(t,value,selected,focus,row,col);setBorder(new EmptyBorder(0,12,0,8));
+                setBackground(selected?UiColors.PRIMARY_SOFT:(row%2==0?Color.WHITE:new Color(251,252,254)));
+                setForeground(UiColors.INK);return this;
+            }};
+        for(int i=0;i<table.getColumnCount();i++)table.getColumnModel().getColumn(i).setCellRenderer(body);
     }
 }
