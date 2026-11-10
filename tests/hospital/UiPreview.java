@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-/** Render de control para comprobar los breakpoints de escritorio y móvil en CI. */
+/** Render de control para revisar todos los módulos en escritorio y móvil. */
 public final class UiPreview {
     private UiPreview() {}
     public static void main(String[] args) throws Exception {
@@ -26,21 +26,10 @@ public final class UiPreview {
         }
         final MainTemplate[] root = new MainTemplate[1];
         final HospitalPage[] page = new HospitalPage[1];
-        root[0] = new MainTemplate(key -> {
-            String title = switch (key) {
-                case "pacientes" -> "Pacientes";
-                case "habitaciones" -> "Habitaciones";
-                case "historial" -> "Historial hospitalario";
-                default -> "Panel de gestión clínica";
-            };
-            root[0].showPage("main", title);
-            root[0].setActiveSection(key);
-            if (page[0] != null) page[0].showSection(key);
-        });
+        root[0] = new MainTemplate(key -> show(root[0], page[0], key));
         page[0] = new HospitalPage(controller);
         root[0].addPage("main", page[0]);
-        root[0].showPage("main", "Panel de gestión clínica");
-        root[0].setActiveSection("dashboard");
+        show(root[0], page[0], "dashboard");
 
         JFrame frame = new JFrame("Hospitalize UI Preview");
         frame.setUndecorated(true);
@@ -52,19 +41,38 @@ public final class UiPreview {
         Robot robot = new Robot();
         Path output = Path.of("target", "ui-previews");
         Files.createDirectories(output);
-        Thread.sleep(900);
-        capture(robot, frame, output.resolve("dashboard-desktop.png"));
-        SwingUtilities.invokeAndWait(() -> frame.setSize(390, 844));
-        Thread.sleep(900);
-        capture(robot, frame, output.resolve("dashboard-mobile.png"));
-        SwingUtilities.invokeAndWait(() -> {
-            root[0].showPage("main", "Habitaciones");
-            root[0].setActiveSection("habitaciones");
-            page[0].showSection("habitaciones");
-        });
+
         Thread.sleep(700);
+        capture(robot, frame, output.resolve("dashboard-desktop.png"));
+        show(root[0], page[0], "pacientes"); Thread.sleep(350);
+        capture(robot, frame, output.resolve("patients-desktop.png"));
+        show(root[0], page[0], "habitaciones"); Thread.sleep(500);
+        capture(robot, frame, output.resolve("rooms-desktop.png"));
+        show(root[0], page[0], "historial"); Thread.sleep(350);
+        capture(robot, frame, output.resolve("history-desktop.png"));
+
+        SwingUtilities.invokeAndWait(() -> frame.setSize(390, 844));
+        Thread.sleep(700);
+        show(root[0], page[0], "dashboard"); Thread.sleep(300);
+        capture(robot, frame, output.resolve("dashboard-mobile.png"));
+        show(root[0], page[0], "pacientes"); Thread.sleep(300);
+        capture(robot, frame, output.resolve("patients-mobile.png"));
+        show(root[0], page[0], "habitaciones"); Thread.sleep(450);
         capture(robot, frame, output.resolve("rooms-mobile.png"));
+        show(root[0], page[0], "historial"); Thread.sleep(300);
+        capture(robot, frame, output.resolve("history-mobile.png"));
         frame.dispose();
+    }
+    private static void show(MainTemplate root, HospitalPage page, String key) {
+        String title = switch (key) {
+            case "pacientes" -> "Pacientes";
+            case "habitaciones" -> "Habitaciones";
+            case "historial" -> "Historial hospitalario";
+            default -> "Panel de gestión clínica";
+        };
+        root.showPage("main", title);
+        root.setActiveSection(key);
+        if (page != null) page.showSection(key);
     }
     private static void capture(Robot robot, JFrame frame, Path path) throws Exception {
         Point location = frame.getLocationOnScreen();
