@@ -74,8 +74,8 @@ public class HistorialPage extends JPanel {
                 boolean narrow=page.getWidth()<720;
                 page.setBorder(new EmptyBorder(16,narrow?12:26,22,narrow?12:26));
                 heading.setLayout(new BorderLayout(8,narrow?10:0));
-                if(narrow){heading.add(labels,BorderLayout.NORTH);heading.add(refresh,BorderLayout.SOUTH);}
-                else{heading.add(labels,BorderLayout.CENTER);heading.add(refresh,BorderLayout.EAST);}
+                if(narrow){heading.add(labels,BorderLayout.NORTH);}
+                else{heading.add(labels,BorderLayout.CENTER);}
                 toolbar.setLayout(new BorderLayout(8,narrow?10:0));
                 if(narrow){toolbar.add(titleBox,BorderLayout.NORTH);toolbar.add(search,BorderLayout.SOUTH);search.setPreferredSize(new Dimension(0,40));}
                 else{toolbar.add(titleBox,BorderLayout.WEST);toolbar.add(search,BorderLayout.EAST);search.setPreferredSize(new Dimension(240,40));}
