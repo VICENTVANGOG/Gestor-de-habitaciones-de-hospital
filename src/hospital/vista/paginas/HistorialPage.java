@@ -6,6 +6,7 @@ import hospital.vista.atomos.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -18,6 +19,7 @@ public class HistorialPage extends JPanel {
         @Override public boolean isCellEditable(int r,int c){return false;}
     };
     private final JTable table=new JTable(model);
+    private final TableRowSorter<DefaultTableModel> sorter=new TableRowSorter<>(model);
     private final JTextField search=new JTextField();
     private final JLabel count=new JLabel();
     private final JPanel page=new JPanel(new BorderLayout(0,18));
@@ -50,16 +52,16 @@ public class HistorialPage extends JPanel {
         search.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(UiColors.BORDER),new EmptyBorder(7,10,7,10)));
         toolbar.add(titleBox,BorderLayout.WEST);toolbar.add(search,BorderLayout.EAST);
 
-        PacientesPage.styleTable(table);tableScroll=new JScrollPane(table);tableScroll.setBorder(BorderFactory.createLineBorder(UiColors.BORDER));
+        PacientesPage.styleTable(table);table.setRowSorter(sorter);tableScroll=new JScrollPane(table);tableScroll.setBorder(BorderFactory.createLineBorder(UiColors.BORDER));
         tableScroll.getViewport().setBackground(Color.WHITE);
         mobileList.setOpaque(false);mobileList.setLayout(new BoxLayout(mobileList,BoxLayout.Y_AXIS));
         mobileScroll=new JScrollPane(mobileList);mobileScroll.setBorder(null);mobileScroll.setOpaque(false);mobileScroll.getViewport().setOpaque(false);
         listing.add(tableScroll,"table");listing.add(mobileScroll,"mobile");
         card.add(toolbar,BorderLayout.NORTH);card.add(listing,BorderLayout.CENTER);page.add(card,BorderLayout.CENTER);
-        add(new JScrollPane(page),BorderLayout.CENTER);
+        JScrollPane pageScroll=new JScrollPane(page);pageScroll.setBorder(null);pageScroll.setOpaque(false);pageScroll.getViewport().setOpaque(false);pageScroll.getVerticalScrollBar().setUnitIncrement(16);add(pageScroll,BorderLayout.CENTER);
         refresh.addActionListener(e->refresh());
         search.getDocument().addDocumentListener(new javax.swing.event.DocumentListener(){
-            private void filter(){refreshMobile();}
+            private void filter(){String q=search.getText().trim();sorter.setRowFilter(q.isEmpty()?null:RowFilter.regexFilter("(?i)"+java.util.regex.Pattern.quote(q)));refreshMobile();}
             public void insertUpdate(javax.swing.event.DocumentEvent e){filter();}
             public void removeUpdate(javax.swing.event.DocumentEvent e){filter();}
             public void changedUpdate(javax.swing.event.DocumentEvent e){filter();}
