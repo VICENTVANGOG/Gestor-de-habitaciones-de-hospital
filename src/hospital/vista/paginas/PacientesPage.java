@@ -94,6 +94,7 @@ public class PacientesPage extends JPanel {
                 else{toolbar.add(titleBox,BorderLayout.WEST);toolbar.add(search,BorderLayout.EAST);search.setPreferredSize(new Dimension(250,40));}
                 listing.removeAll();listing.add(narrow?cardsList:tableScroll,BorderLayout.CENTER);listing.revalidate();
                 page.revalidate();
+                currentPage=0;rebuildFilteredPatients();
             }
         });
         refresh();
@@ -103,7 +104,7 @@ public class PacientesPage extends JPanel {
         pagination.setOpaque(false);pageInfo.setFont(new Font(UiColors.FONT,Font.PLAIN,10));pageInfo.setForeground(UiColors.MUTED);
         for(JButton b:new JButton[]{previousPage,nextPage}){b.setFont(new Font(UiColors.FONT,Font.BOLD,10));b.setFocusPainted(false);b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));b.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(UiColors.BORDER),new EmptyBorder(6,11,6,11)));b.setBackground(Color.WHITE);b.setForeground(UiColors.INK);}
         previousPage.addActionListener(e->{if(currentPage>0){currentPage--;rebuildFilteredPatients();}});
-        nextPage.addActionListener(e->{int pages=Math.max(1,(filteredPatients.size()+PAGE_SIZE-1)/PAGE_SIZE);if(currentPage<pages-1){currentPage++;rebuildFilteredPatients();}});
+        nextPage.addActionListener(e->{int pages=Math.max(1,(filteredPatients.size()+pageSize()-1)/pageSize());if(currentPage<pages-1){currentPage++;rebuildFilteredPatients();}});
         pagination.setBorder(new EmptyBorder(12,0,0,0));pagination.add(pageInfo);pagination.add(previousPage);pagination.add(nextPage);
     }
     private void updatePagination(){int pages=Math.max(1,(filteredPatients.size()+PAGE_SIZE-1)/PAGE_SIZE);pageInfo.setText("Página "+(currentPage+1)+" de "+pages+"  ·  "+filteredPatients.size()+" registros");previousPage.setEnabled(currentPage>0);nextPage.setEnabled(currentPage<pages-1);previousPage.setVisible(pages>1);nextPage.setVisible(pages>1);pageInfo.setVisible(pages>1);pagination.revalidate();pagination.repaint();}
@@ -138,6 +139,8 @@ public class PacientesPage extends JPanel {
         currentPage=0;
         rebuildFilteredPatients();
     }
+    private int pageSize(){return page.getWidth()<720?4:PAGE_SIZE;}
+
     private void rebuildFilteredPatients(){
         String q=search.getText().trim().toLowerCase();filteredPatients.clear();
         for(Paciente p:controller.pacientes()){
@@ -146,7 +149,7 @@ public class PacientesPage extends JPanel {
         }
         int pages=Math.max(1,(filteredPatients.size()+PAGE_SIZE-1)/PAGE_SIZE);currentPage=Math.min(currentPage,pages-1);
         count.setText(filteredPatients.size()+(filteredPatients.size()==1?" paciente encontrado":" pacientes encontrados"));
-        model.setRowCount(0);int from=currentPage*PAGE_SIZE,to=Math.min(from+PAGE_SIZE,filteredPatients.size());
+        model.setRowCount(0);int from=currentPage*pageSize(),to=Math.min(from+pageSize(),filteredPatients.size());
         for(int i=from;i<to;i++){Paciente p=filteredPatients.get(i);model.addRow(new Object[]{p.getIdentificacion(),p.getNombre(),p.getEdad(),p.getNivelTriage(),p.getMotivoIngreso()});}
         refreshCards();updatePagination();
     }

@@ -88,7 +88,7 @@ public class HistorialPage extends JPanel {
                 toolbar.setLayout(new BorderLayout(8,narrow?10:0));
                 if(narrow){toolbar.add(titleBox,BorderLayout.NORTH);toolbar.add(search,BorderLayout.SOUTH);search.setPreferredSize(new Dimension(0,40));}
                 else{toolbar.add(titleBox,BorderLayout.WEST);toolbar.add(search,BorderLayout.EAST);search.setPreferredSize(new Dimension(240,40));}
-                listing.removeAll();listing.add(narrow?mobileList:tableScroll,BorderLayout.CENTER);listing.revalidate();page.revalidate();
+                listing.removeAll();listing.add(narrow?mobileList:tableScroll,BorderLayout.CENTER);listing.revalidate();page.revalidate();currentPage=0;rebuildFilteredRecords();
             }
         });
         refresh();
@@ -97,7 +97,7 @@ public class HistorialPage extends JPanel {
         pagination.setOpaque(false);pageInfo.setFont(new Font(UiColors.FONT,Font.PLAIN,10));pageInfo.setForeground(UiColors.MUTED);
         for(JButton b:new JButton[]{previousPage,nextPage}){b.setFont(new Font(UiColors.FONT,Font.BOLD,10));b.setFocusPainted(false);b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));b.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(UiColors.BORDER),new EmptyBorder(6,11,6,11)));b.setBackground(Color.WHITE);b.setForeground(UiColors.INK);}
         previousPage.addActionListener(e->{if(currentPage>0){currentPage--;rebuildFilteredRecords();}});
-        nextPage.addActionListener(e->{int pages=Math.max(1,(filteredRecords.size()+PAGE_SIZE-1)/PAGE_SIZE);if(currentPage<pages-1){currentPage++;rebuildFilteredRecords();}});
+        nextPage.addActionListener(e->{int pages=Math.max(1,(filteredRecords.size()+pageSize()-1)/pageSize());if(currentPage<pages-1){currentPage++;rebuildFilteredRecords();}});
         pagination.setBorder(new EmptyBorder(12,0,0,0));pagination.add(pageInfo);pagination.add(previousPage);pagination.add(nextPage);
     }
     private void updatePagination(){int pages=Math.max(1,(filteredRecords.size()+PAGE_SIZE-1)/PAGE_SIZE);pageInfo.setText("Página "+(currentPage+1)+" de "+pages+"  ·  "+filteredRecords.size()+" registros");previousPage.setEnabled(currentPage>0);nextPage.setEnabled(currentPage<pages-1);previousPage.setVisible(pages>1);nextPage.setVisible(pages>1);pageInfo.setVisible(pages>1);pagination.revalidate();pagination.repaint();}
@@ -116,11 +116,13 @@ public class HistorialPage extends JPanel {
     public void refresh(){
         currentPage=0;rebuildFilteredRecords();
     }
+    private int pageSize(){return page.getWidth()<720?4:PAGE_SIZE;}
+
     private void rebuildFilteredRecords(){
         String q=search.getText().trim().toLowerCase();filteredRecords.clear();List<RegistroHistorial> records=controller.historial();
         for(int i=records.size()-1;i>=0;i--){RegistroHistorial r=records.get(i);String searchable=(r.getNombrePaciente()+" "+r.getIdentificacionPaciente()+" "+r.getAccion()+" "+r.getNumeroHabitacion()).toLowerCase();if(q.isEmpty()||searchable.contains(q))filteredRecords.add(r);}
         int pages=Math.max(1,(filteredRecords.size()+PAGE_SIZE-1)/PAGE_SIZE);currentPage=Math.min(currentPage,pages-1);count.setText(filteredRecords.size()+" movimientos encontrados");
-        model.setRowCount(0);int from=currentPage*PAGE_SIZE,to=Math.min(from+PAGE_SIZE,filteredRecords.size());
+        model.setRowCount(0);int from=currentPage*pageSize(),to=Math.min(from+pageSize(),filteredRecords.size());
         for(int i=from;i<to;i++){RegistroHistorial r=filteredRecords.get(i);model.addRow(new Object[]{r.getFechaHora().format(FORMAT),r.getAccion(),"Habitación "+r.getNumeroHabitacion(),r.getNombrePaciente(),r.getIdentificacionPaciente()});}
         refreshMobile();updatePagination();
     }
