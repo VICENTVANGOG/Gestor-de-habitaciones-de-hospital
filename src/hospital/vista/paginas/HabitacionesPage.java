@@ -101,7 +101,17 @@ public class HabitacionesPage extends JPanel {
         mapCard.add(floorsPanel, BorderLayout.CENTER);
         content.add(metrics, BorderLayout.NORTH);
         content.add(mapCard, BorderLayout.CENTER);
-        page.add(content, BorderLayout.CENTER);\n        page.addComponentListener(new java.awt.event.ComponentAdapter() {\n            @Override public void componentResized(java.awt.event.ComponentEvent e) {\n                int width = page.getWidth();\n                metrics.setLayout(new GridLayout(width < 620 ? 3 : 1, width < 620 ? 1 : 3, 10, 10));\n                heading.setLayout(new BorderLayout(8, width < 620 ? 10 : 0));\n                if (width < 620) { heading.add(titleGroup, BorderLayout.NORTH); heading.add(actions, BorderLayout.SOUTH); }\n                else { heading.add(titleGroup, BorderLayout.CENTER); heading.add(actions, BorderLayout.EAST); }\n                page.revalidate();\n            }\n        });
+        page.add(content, BorderLayout.CENTER);
+        page.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override public void componentResized(java.awt.event.ComponentEvent e) {
+                int width = page.getWidth();
+                metrics.setLayout(new GridLayout(width < 620 ? 3 : 1, width < 620 ? 1 : 3, 10, 10));
+                heading.setLayout(new BorderLayout(8, width < 620 ? 10 : 0));
+                if (width < 620) { heading.add(titleGroup, BorderLayout.NORTH); heading.add(actions, BorderLayout.SOUTH); }
+                else { heading.add(titleGroup, BorderLayout.CENTER); heading.add(actions, BorderLayout.EAST); }
+                page.revalidate();
+            }
+        });
         JScrollPane pageScroll = new JScrollPane(page);
         pageScroll.setBorder(null);
         pageScroll.setOpaque(false);
@@ -280,7 +290,9 @@ public class HabitacionesPage extends JPanel {
             floorLabel.add(floorRange);
             floorLabel.add(Box.createVerticalGlue());
 
-            int availableWidth = Math.max(220, floorsPanel.getWidth() - 100);\n            int columns = Math.max(2, Math.min(6, availableWidth / 112));\n            JPanel roomGrid = new JPanel(new GridLayout(0, columns, 9, 9));
+            int availableWidth = Math.max(220, floorsPanel.getWidth() - 100);
+            int columns = Math.max(2, Math.min(6, availableWidth / 112));
+            JPanel roomGrid = new JPanel(new GridLayout(0, columns, 9, 9));
             roomGrid.setOpaque(false);
             for (Habitacion room : rooms) {
                 if (room.getPiso() != floorNumber) continue;
