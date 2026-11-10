@@ -51,7 +51,7 @@ public class MainTemplate extends JPanel {
         addComponentListener(new ComponentAdapter() {
             @Override public void componentResized(ComponentEvent e) {
                 int width=getWidth();boolean mobile=width<760;
-                sidebar.setVisible(!mobile);mobileNav.setVisible(mobile);
+                sidebar.setVisible(!mobile);mobileNav.setVisible(mobile);clinic.setVisible(width>=520);
                 role.setVisible(width>=520);
                 context.setBorder(new EmptyBorder(12,width<520?14:24,10,8));
                 right.revalidate();
