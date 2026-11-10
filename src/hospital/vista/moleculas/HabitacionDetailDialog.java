@@ -4,6 +4,8 @@ import hospital.modelos.Habitacion;
 import hospital.modelos.RegistroHistorial;
 import hospital.modelos.Paciente;
 import hospital.vista.atomos.UiColors;
+import hospital.vista.atomos.UiCard;
+import hospital.vista.atomos.UiButton;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -12,20 +14,22 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/** Diálogo de detalle: paciente actual y trazabilidad histórica de una habitación. */
+/** Diálogo adaptable con datos actuales y trazabilidad histórica de la cama. */
 public class HabitacionDetailDialog extends JDialog {
     private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("dd MMM yyyy · HH:mm");
 
     public HabitacionDetailDialog(Window owner, Habitacion room, List<RegistroHistorial> allHistory) {
         super(owner, "Detalle de habitación " + room.getNumero(), ModalityType.APPLICATION_MODAL);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setSize(560, 570);
-        setMinimumSize(new Dimension(500, 480));
+        int ownerWidth = owner == null ? 600 : owner.getWidth();
+        int ownerHeight = owner == null ? 700 : owner.getHeight();
+        setSize(Math.max(320, Math.min(600, ownerWidth - 28)), Math.max(420, Math.min(700, ownerHeight - 36)));
+        setMinimumSize(new Dimension(320, 400));
         setLocationRelativeTo(owner);
 
-        JPanel root = new JPanel(new BorderLayout(0, 16));
+        JPanel root = new JPanel(new BorderLayout(0, 14));
         root.setBackground(UiColors.BACKGROUND);
-        root.setBorder(new EmptyBorder(22, 24, 20, 24));
+        root.setBorder(new EmptyBorder(18, 18, 14, 18));
 
         JPanel heading = new JPanel();
         heading.setOpaque(false);
@@ -34,10 +38,10 @@ public class HabitacionDetailDialog extends JDialog {
         eyebrow.setFont(new Font(UiColors.FONT, Font.BOLD, 9));
         eyebrow.setForeground(UiColors.PRIMARY);
         JLabel title = new JLabel("Habitación " + room.getNumero());
-        title.setFont(new Font(UiColors.FONT, Font.BOLD, 24));
+        title.setFont(new Font(UiColors.FONT, Font.BOLD, 23));
         title.setForeground(UiColors.INK);
         JLabel subtitle = new JLabel("Piso " + room.getPiso() + "  ·  Posición " + room.getPosicion());
-        subtitle.setFont(new Font(UiColors.FONT, Font.PLAIN, 11));
+        subtitle.setFont(new Font(UiColors.FONT, Font.PLAIN, 10));
         subtitle.setForeground(UiColors.MUTED);
         heading.add(eyebrow);
         heading.add(Box.createVerticalStrut(5));
@@ -45,15 +49,13 @@ public class HabitacionDetailDialog extends JDialog {
         heading.add(Box.createVerticalStrut(3));
         heading.add(subtitle);
 
-        JPanel current = new JPanel(new BorderLayout(0, 10));
-        current.setBackground(Color.WHITE);
-        current.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(UiColors.BORDER),
-                new EmptyBorder(15, 16, 15, 16)));
+        UiCard current = new UiCard(16, 15);
+        current.setLayout(new BorderLayout(0, 10));
         JLabel currentTitle = new JLabel("Paciente asignado actualmente");
         currentTitle.setFont(new Font(UiColors.FONT, Font.BOLD, 12));
         currentTitle.setForeground(UiColors.INK);
         current.add(currentTitle, BorderLayout.NORTH);
+
         Paciente patient = room.getPaciente();
         JPanel patientInfo = new JPanel();
         patientInfo.setOpaque(false);
@@ -61,7 +63,7 @@ public class HabitacionDetailDialog extends JDialog {
         if (patient == null) {
             JLabel available = new JLabel("Esta habitación se encuentra disponible.");
             available.setFont(new Font(UiColors.FONT, Font.PLAIN, 11));
-            available.setForeground(new Color(22, 151, 126));
+            available.setForeground(UiColors.TEAL);
             patientInfo.add(available);
         } else {
             addInfo(patientInfo, "Nombre", patient.getNombre());
@@ -77,11 +79,8 @@ public class HabitacionDetailDialog extends JDialog {
                 .sorted(Comparator.comparing(RegistroHistorial::getFechaHora).reversed())
                 .collect(Collectors.toList());
 
-        JPanel historyCard = new JPanel(new BorderLayout(0, 10));
-        historyCard.setBackground(Color.WHITE);
-        historyCard.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(UiColors.BORDER),
-                new EmptyBorder(15, 16, 14, 16)));
+        UiCard historyCard = new UiCard(16, 15);
+        historyCard.setLayout(new BorderLayout(0, 10));
         JPanel historyHeading = new JPanel(new BorderLayout());
         historyHeading.setOpaque(false);
         JLabel historyTitle = new JLabel("Historial de esta habitación");
@@ -97,50 +96,49 @@ public class HabitacionDetailDialog extends JDialog {
         timeline.setOpaque(false);
         timeline.setLayout(new BoxLayout(timeline, BoxLayout.Y_AXIS));
         if (roomHistory.isEmpty()) {
-            JLabel empty = new JLabel("Todavía no hay ingresos ni salidas registrados para esta habitación.");
+            JLabel empty = new JLabel("Todavía no hay ingresos ni salidas registrados.");
             empty.setFont(new Font(UiColors.FONT, Font.PLAIN, 10));
             empty.setForeground(UiColors.MUTED);
             timeline.add(empty);
         } else {
             for (RegistroHistorial entry : roomHistory) timeline.add(historyEntry(entry));
         }
-        JScrollPane scroll = new JScrollPane(timeline);
-        scroll.setBorder(BorderFactory.createEmptyBorder());
-        scroll.getViewport().setBackground(Color.WHITE);
-        scroll.getVerticalScrollBar().setUnitIncrement(14);
         historyCard.add(historyHeading, BorderLayout.NORTH);
-        historyCard.add(scroll, BorderLayout.CENTER);
+        historyCard.add(timeline, BorderLayout.CENTER);
 
         JPanel body = new JPanel();
         body.setOpaque(false);
         body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
+        current.setAlignmentX(Component.LEFT_ALIGNMENT);
+        historyCard.setAlignmentX(Component.LEFT_ALIGNMENT);
         body.add(current);
         body.add(Box.createVerticalStrut(12));
         body.add(historyCard);
 
-        JButton close = new JButton("Cerrar");
-        close.setFont(new Font(UiColors.FONT, Font.BOLD, 11));
-        close.setForeground(Color.WHITE);
-        close.setBackground(UiColors.PRIMARY);
-        close.setFocusPainted(false);
-        close.setBorder(new EmptyBorder(10, 18, 10, 18));
+        JScrollPane bodyScroll = new JScrollPane(body);
+        bodyScroll.setBorder(null);
+        bodyScroll.setOpaque(false);
+        bodyScroll.getViewport().setOpaque(false);
+        bodyScroll.getVerticalScrollBar().setUnitIncrement(16);
+
+        UiButton close = new UiButton("Cerrar", false);
+        close.addActionListener(e -> dispose());
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         footer.setOpaque(false);
         footer.add(close);
-        close.addActionListener(e -> dispose());
 
         root.add(heading, BorderLayout.NORTH);
-        root.add(body, BorderLayout.CENTER);
+        root.add(bodyScroll, BorderLayout.CENTER);
         root.add(footer, BorderLayout.SOUTH);
         setContentPane(root);
     }
 
     private void addInfo(JPanel parent, String label, String value) {
-        JPanel row = new JPanel(new BorderLayout(12, 0));
+        JPanel row = new JPanel(new BorderLayout(10, 0));
         row.setOpaque(false);
         row.setBorder(new EmptyBorder(3, 0, 3, 0));
         JLabel key = new JLabel(label);
-        key.setPreferredSize(new Dimension(125, 18));
+        key.setPreferredSize(new Dimension(112, 18));
         key.setFont(new Font(UiColors.FONT, Font.PLAIN, 10));
         key.setForeground(UiColors.MUTED);
         JLabel text = new JLabel(value);
