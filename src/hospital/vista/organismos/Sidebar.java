@@ -101,7 +101,6 @@ public class Sidebar extends JPanel {
         parent.add(Box.createVerticalStrut(8));
     }
 
-    public void setCompact(boolean compact){}
     public void setActive(String key){items.forEach((id,button)->button.setActive(id.equals(key)));}
 
     private static class NavButton extends JButton{

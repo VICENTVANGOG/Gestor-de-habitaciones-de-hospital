@@ -3,6 +3,7 @@ package hospital.modelos;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/** Guarda los datos de un ingreso o una salida del hospital. */
 public class RegistroHistorial {
     private final int numeroHabitacion;
     private final String identificacionPaciente;
@@ -17,14 +18,17 @@ public class RegistroHistorial {
         this.accion = accion;
         this.fechaHora = LocalDateTime.now();
     }
+
     public int getNumeroHabitacion() { return numeroHabitacion; }
     public String getIdentificacionPaciente() { return identificacionPaciente; }
     public String getNombrePaciente() { return nombrePaciente; }
     public String getAccion() { return accion; }
     public LocalDateTime getFechaHora() { return fechaHora; }
-    @Override public String toString() {
-        return fechaHora.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")) +
-               " | " + accion + " | Habitación " + numeroHabitacion +
-               " | " + nombrePaciente + " (" + identificacionPaciente + ")";
+
+    @Override
+    public String toString() {
+        return fechaHora.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
+                + " | " + accion + " | Habitación " + numeroHabitacion
+                + " | " + nombrePaciente + " (" + identificacionPaciente + ")";
     }
 }
