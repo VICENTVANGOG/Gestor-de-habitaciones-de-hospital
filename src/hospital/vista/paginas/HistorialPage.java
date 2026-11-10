@@ -27,9 +27,8 @@ public class HistorialPage extends JPanel {
     private final JPanel labels=new JPanel();
     private final JPanel toolbar=new JPanel(new BorderLayout(10,0));
     private final JPanel mobileList=new JPanel();
-    private final JPanel listing=new JPanel(new CardLayout());
+    private final JPanel listing=new JPanel(new BorderLayout());
     private final JScrollPane tableScroll;
-    private final JScrollPane mobileScroll;
 
     public HistorialPage(HospitalController controller){
         this.controller=controller;setLayout(new BorderLayout());setOpaque(false);
@@ -55,8 +54,7 @@ public class HistorialPage extends JPanel {
         PacientesPage.styleTable(table);table.setRowSorter(sorter);tableScroll=new JScrollPane(table);tableScroll.setBorder(BorderFactory.createLineBorder(UiColors.BORDER));
         tableScroll.getViewport().setBackground(Color.WHITE);
         mobileList.setOpaque(false);mobileList.setLayout(new BoxLayout(mobileList,BoxLayout.Y_AXIS));
-        mobileScroll=new JScrollPane(mobileList);mobileScroll.setBorder(null);mobileScroll.setOpaque(false);mobileScroll.getViewport().setOpaque(false);
-        listing.add(tableScroll,"table");listing.add(mobileScroll,"mobile");
+        listing.add(tableScroll,BorderLayout.CENTER);
         card.add(toolbar,BorderLayout.NORTH);card.add(listing,BorderLayout.CENTER);page.add(card,BorderLayout.CENTER);
         JScrollPane pageScroll=new JScrollPane(page);pageScroll.setBorder(null);pageScroll.setOpaque(false);pageScroll.getViewport().setOpaque(false);pageScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);pageScroll.getVerticalScrollBar().setUnitIncrement(16);add(pageScroll,BorderLayout.CENTER);
         refresh.addActionListener(e->refresh());
@@ -76,7 +74,7 @@ public class HistorialPage extends JPanel {
                 toolbar.setLayout(new BorderLayout(8,narrow?10:0));
                 if(narrow){toolbar.add(titleBox,BorderLayout.NORTH);toolbar.add(search,BorderLayout.SOUTH);search.setPreferredSize(new Dimension(0,38));}
                 else{toolbar.add(titleBox,BorderLayout.WEST);toolbar.add(search,BorderLayout.EAST);search.setPreferredSize(new Dimension(220,36));}
-                ((CardLayout)listing.getLayout()).show(listing,narrow?"mobile":"table");page.revalidate();
+                listing.removeAll();listing.add(narrow?mobileList:tableScroll,BorderLayout.CENTER);listing.revalidate();page.revalidate();
             }
         });
         refresh();

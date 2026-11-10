@@ -26,9 +26,8 @@ public class PacientesPage extends JPanel {
     private final JPanel labels=new JPanel();
     private final JPanel toolbar=new JPanel(new BorderLayout(12,0));
     private final JPanel cardsList=new JPanel();
-    private final JPanel listing=new JPanel(new CardLayout());
+    private final JPanel listing=new JPanel(new BorderLayout());
     private final JScrollPane tableScroll;
-    private final JScrollPane cardsScroll;
 
     public PacientesPage(HospitalController controller){
         this.controller=controller;setLayout(new BorderLayout());setOpaque(false);
@@ -58,8 +57,7 @@ public class PacientesPage extends JPanel {
         tableScroll=new JScrollPane(table);tableScroll.setBorder(BorderFactory.createLineBorder(UiColors.BORDER));
         tableScroll.getViewport().setBackground(Color.WHITE);tableScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         cardsList.setOpaque(false);cardsList.setLayout(new BoxLayout(cardsList,BoxLayout.Y_AXIS));
-        cardsScroll=new JScrollPane(cardsList);cardsScroll.setBorder(null);cardsScroll.setOpaque(false);cardsScroll.getViewport().setOpaque(false);
-        listing.add(tableScroll,"table");listing.add(cardsScroll,"cards");
+        listing.add(tableScroll,BorderLayout.CENTER);
         card.add(toolbar,BorderLayout.NORTH);card.add(listing,BorderLayout.CENTER);page.add(card,BorderLayout.CENTER);
         JScrollPane pageScroll=new JScrollPane(page);pageScroll.setBorder(null);pageScroll.setOpaque(false);pageScroll.getViewport().setOpaque(false);pageScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);pageScroll.getVerticalScrollBar().setUnitIncrement(16);add(pageScroll,BorderLayout.CENTER);
         add.getAccessibleContext().setAccessibleName("Registrar paciente");
@@ -84,7 +82,7 @@ public class PacientesPage extends JPanel {
                 toolbar.setLayout(new BorderLayout(8,narrow?10:0));
                 if(narrow){toolbar.add(titleBox,BorderLayout.NORTH);toolbar.add(search,BorderLayout.SOUTH);search.setPreferredSize(new Dimension(0,38));}
                 else{toolbar.add(titleBox,BorderLayout.WEST);toolbar.add(search,BorderLayout.EAST);search.setPreferredSize(new Dimension(240,36));}
-                ((CardLayout)listing.getLayout()).show(listing,narrow?"cards":"table");
+                listing.removeAll();listing.add(narrow?cardsList:tableScroll,BorderLayout.CENTER);listing.revalidate();
                 page.revalidate();
             }
         });
