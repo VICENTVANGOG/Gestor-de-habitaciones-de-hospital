@@ -11,7 +11,19 @@ public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {
+                try (java.io.InputStream fontStream = Main.class.getResourceAsStream("/fonts/InterVariable.ttf")) {
+                    if (fontStream != null) {
+                        java.awt.Font inter = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, fontStream);
+                        java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(inter);
+                    }
+                }
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                java.awt.Font baseFont = new java.awt.Font("Inter", java.awt.Font.PLAIN, 12);
+                UIManager.put("Label.font", baseFont);
+                UIManager.put("Button.font", baseFont);
+                UIManager.put("TextField.font", baseFont);
+                UIManager.put("Table.font", baseFont);
+                UIManager.put("TableHeader.font", baseFont.deriveFont(java.awt.Font.BOLD));
                 UIManager.put("Panel.background", new Color(247, 250, 252));
                 UIManager.put("OptionPane.messageFont", new Font("Inter", Font.PLAIN, 12));
             } catch (Exception ignored) {}
