@@ -1,27 +1,57 @@
 package hospital.vista.paginas;
-import hospital.controlador.HospitalController;import hospital.modelos.*;import hospital.vista.atomos.UiButton;
-import javax.swing.*;import javax.swing.table.DefaultTableModel;import java.awt.*;import java.time.format.DateTimeFormatter;
-/** Páginas visuales del sistema. Cada sección reutiliza átomos y moléculas. */
+
+import hospital.controlador.HospitalController;
+import hospital.vista.atomos.UiColors;
+import javax.swing.*;
+import java.awt.*;
+
+/**
+ * Contenedor de navegación entre páginas. La lógica de cada módulo vive
+ * en su propia clase de vista; este componente solo coordina su presentación.
+ */
 public class HospitalPage extends JPanel {
- private final HospitalController c;private final CardLayout layout=new CardLayout();private final JPanel pages=new JPanel(layout);
- private final DefaultTableModel pm=model("Identificación","Nombre","Edad","Triage","Motivo"),hm=model("Habitación","Piso","Posición","Estado","Paciente"),rm=model("Fecha","Acción","Habitación","Paciente","Identificación");
- public HospitalPage(HospitalController c){this.c=c;setLayout(new BorderLayout());setBorder(BorderFactory.createEmptyBorder(18,22,22,22));
-  JPanel dashboard=new JPanel(new GridLayout(1,3,14,0));dashboard.setBorder(BorderFactory.createEmptyBorder(25,10,10,10));
-  dashboard.add(metric("30","Habitaciones totales"));dashboard.add(metric("5 × 6","Distribución"));dashboard.add(metric("MVC + Atomic","Arquitectura"));
-  pages.add(dashboard,"dashboard");
-  pages.add(tablePage(pm,new String[]{"Registrar paciente","Actualizar"}),"pacientes");
-  pages.add(tablePage(hm,new String[]{"Asignar","Dar salida","Matriz","Actualizar"}),"habitaciones");
-  pages.add(tablePage(rm,new String[]{"Actualizar"}),"historial");
-  add(pages,BorderLayout.CENTER);loadPatients();loadRooms();loadHistory();
- }
- private JPanel metric(String value,String label){JPanel p=new JPanel();p.setLayout(new BoxLayout(p,BoxLayout.Y_AXIS));p.setBackground(Color.WHITE);p.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(226,232,240)),BorderFactory.createEmptyBorder(22,20,22,20)));JLabel v=new JLabel(value);v.setFont(new Font("Segoe UI",Font.BOLD,26));v.setForeground(new Color(37,99,235));JLabel l=new JLabel(label);l.setForeground(new Color(100,116,139));p.add(v);p.add(Box.createVerticalStrut(8));p.add(l);return p;}
- private static DefaultTableModel model(String...cols){return new DefaultTableModel(cols,0){public boolean isCellEditable(int r,int c){return false;}};}
- private JPanel tablePage(DefaultTableModel m,String[] actions){JPanel p=new JPanel(new BorderLayout(0,10));JPanel tools=new JPanel(new FlowLayout(FlowLayout.LEFT));for(String a:actions){UiButton b=new UiButton(a);b.addActionListener(e->{switch(a){case "Registrar paciente"->register();case "Asignar"->assign();case "Dar salida"->discharge();case "Matriz"->JOptionPane.showMessageDialog(this,c.matriz(),"Matriz dispersa 5 × 6",JOptionPane.INFORMATION_MESSAGE);default->{if(m==pm)loadPatients();else if(m==hm)loadRooms();else loadHistory();}}});tools.add(b);}p.add(tools,BorderLayout.NORTH);JTable t=new JTable(m);t.setRowHeight(29);t.setFont(new Font("Segoe UI",Font.PLAIN,13));p.add(new JScrollPane(t),BorderLayout.CENTER);return p;}
- public void showSection(String key){layout.show(pages,key);if(key.equals("pacientes"))loadPatients();if(key.equals("habitaciones"))loadRooms();if(key.equals("historial"))loadHistory();}
- private void register(){JTextField id=new JTextField(),name=new JTextField(),age=new JTextField(),triage=new JTextField(),reason=new JTextField();Object[] f={"Identificación",id,"Nombre completo",name,"Edad",age,"Triage (1-5)",triage,"Motivo de ingreso",reason};if(JOptionPane.showConfirmDialog(this,f,"Registrar paciente",JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)try{c.registrarPaciente(id.getText().trim(),name.getText().trim(),Integer.parseInt(age.getText()),Integer.parseInt(triage.getText()),reason.getText().trim());loadPatients();JOptionPane.showMessageDialog(this,"Paciente registrado.");}catch(Exception ex){JOptionPane.showMessageDialog(this,ex.getMessage(),"Validación",JOptionPane.WARNING_MESSAGE);}}
- private void assign(){JTextField id=new JTextField(),n=new JTextField();Object[] f={"Identificación",id,"Habitación (1-30)",n};if(JOptionPane.showConfirmDialog(this,f,"Asignar habitación",JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)try{c.asignarHabitacion(id.getText().trim(),Integer.parseInt(n.getText()));loadRooms();}catch(Exception ex){JOptionPane.showMessageDialog(this,ex.getMessage(),"No se pudo asignar",JOptionPane.WARNING_MESSAGE);}}
- private void discharge(){String id=JOptionPane.showInputDialog(this,"Identificación del paciente");if(id!=null)try{c.darSalida(id.trim());loadRooms();loadHistory();}catch(Exception ex){JOptionPane.showMessageDialog(this,ex.getMessage(),"No se pudo registrar salida",JOptionPane.WARNING_MESSAGE);}}
- private void loadPatients(){pm.setRowCount(0);for(Paciente p:c.pacientes())pm.addRow(new Object[]{p.getIdentificacion(),p.getNombre(),p.getEdad(),p.getNivelTriage(),p.getMotivoIngreso()});}
- private void loadRooms(){hm.setRowCount(0);for(Habitacion h:c.habitaciones())hm.addRow(new Object[]{h.getNumero(),h.getPiso(),h.getPosicion(),h.isOcupada()?"Ocupada":"Disponible",h.getPaciente()==null?"—":h.getPaciente().getNombre()});}
- private void loadHistory(){rm.setRowCount(0);for(RegistroHistorial r:c.historial())rm.addRow(new Object[]{r.getFechaHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")),r.getAccion(),r.getNumeroHabitacion(),r.getNombrePaciente(),r.getIdentificacionPaciente()});}
+    private final CardLayout layout = new CardLayout();
+    private final JPanel pages = new JPanel(layout);
+    private final DashboardPage dashboard;
+    private final PacientesPage patients;
+    private final HabitacionesPage rooms;
+    private final HistorialPage history;
+
+    public HospitalPage(HospitalController controller) {
+        setLayout(new BorderLayout());
+        setBackground(UiColors.BACKGROUND);
+        dashboard = new DashboardPage(controller);
+        patients = new PacientesPage(controller);
+        rooms = new HabitacionesPage(controller);
+        history = new HistorialPage(controller);
+        pages.add(dashboard, "dashboard");
+        pages.add(patients, "pacientes");
+        pages.add(rooms, "habitaciones");
+        pages.add(history, "historial");
+        pages.setBackground(UiColors.BACKGROUND);
+        add(pages, BorderLayout.CENTER);
+        showSection("dashboard");
+    }
+
+    public void showSection(String key) {
+        String section = switch (key) {
+            case "pacientes", "habitaciones", "historial" -> key;
+            default -> "dashboard";
+        };
+        layout.show(pages, section);
+        switch (section) {
+            case "pacientes" -> patients.refresh();
+            case "habitaciones" -> rooms.refresh();
+            case "historial" -> history.refresh();
+            default -> dashboard.refresh();
+        }
+    }
+
+    /** Actualiza todas las páginas después de una operación del modelo. */
+    public void refreshAll() {
+        dashboard.refresh();
+        patients.refresh();
+        rooms.refresh();
+        history.refresh();
+    }
 }

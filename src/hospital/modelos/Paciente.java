@@ -1,5 +1,6 @@
 package hospital.modelos;
 
+/** Entidad Paciente. Valida sus invariantes al construir y modificar datos. */
 public class Paciente {
     private String identificacion;
     private String nombre;
@@ -9,61 +10,48 @@ public class Paciente {
 
     public Paciente(String identificacion, String nombre, int edad,
                     int nivelTriage, String motivoIngreso) {
-        this.identificacion = identificacion;
-        this.nombre = nombre;
-        this.edad = edad;
-        this.nivelTriage = nivelTriage;
-        this.motivoIngreso = motivoIngreso;
+        setIdentificacion(identificacion);
+        setNombre(nombre);
+        setEdad(edad);
+        setNivelTriage(nivelTriage);
+        setMotivoIngreso(motivoIngreso);
     }
 
-    public String getIdentificacion() {
-        return identificacion;
+    public String getIdentificacion() { return identificacion; }
+    public void setIdentificacion(String value) {
+        if (value == null || value.trim().isEmpty())
+            throw new IllegalArgumentException("La identificación es obligatoria.");
+        this.identificacion = value.trim();
+    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String value) {
+        if (value == null || value.trim().isEmpty())
+            throw new IllegalArgumentException("El nombre del paciente es obligatorio.");
+        this.nombre = value.trim();
+    }
+    public int getEdad() { return edad; }
+    public void setEdad(int value) {
+        if (value < 0 || value > 130)
+            throw new IllegalArgumentException("La edad debe estar entre 0 y 130 años.");
+        this.edad = value;
+    }
+    public int getNivelTriage() { return nivelTriage; }
+    public void setNivelTriage(int value) {
+        if (value < 1 || value > 5)
+            throw new IllegalArgumentException("El nivel de triage debe estar entre 1 y 5.");
+        this.nivelTriage = value;
+    }
+    public String getMotivoIngreso() { return motivoIngreso; }
+    public void setMotivoIngreso(String value) {
+        if (value == null || value.trim().isEmpty())
+            throw new IllegalArgumentException("El motivo de ingreso es obligatorio.");
+        this.motivoIngreso = value.trim();
     }
 
-    public void setIdentificacion(String identificacion) {
-        this.identificacion = identificacion;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public int getEdad() {
-        return edad;
-    }
-
-    public void setEdad(int edad) {
-        this.edad = edad;
-    }
-
-    public int getNivelTriage() {
-        return nivelTriage;
-    }
-
-    public void setNivelTriage(int nivelTriage) {
-        this.nivelTriage = nivelTriage;
-    }
-
-    public String getMotivoIngreso() {
-        return motivoIngreso;
-    }
-
-    public void setMotivoIngreso(String motivoIngreso) {
-        this.motivoIngreso = motivoIngreso;
-    }
-
-    @Override
-    public String toString() {
-        return "Paciente{" +
-                "identificacion='" + identificacion + '\'' +
-                ", nombre='" + nombre + '\'' +
-                ", edad=" + edad +
-                ", nivelTriage=" + nivelTriage +
-                ", motivoIngreso='" + motivoIngreso + '\'' +
-                '}';
+    @Override public String toString() {
+        return "Paciente{" + "identificacion='" + identificacion + '\'' +
+                ", nombre='" + nombre + '\'' + ", edad=" + edad +
+                ", nivelTriage=" + nivelTriage + ", motivoIngreso='" +
+                motivoIngreso + '\'' + '}';
     }
 }

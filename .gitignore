@@ -1,13 +1,9 @@
+# Java
 *.class
-*.jar
-*.war
-*.ear
-target/
 bin/
+target/
 out/
-.vscode/*
-!.vscode/extensions.json
-!.vscode/launch.json
-!.vscode/settings.json
+.idea/
+.vscode/
+*.log
 .DS_Store
-Thumbs.db

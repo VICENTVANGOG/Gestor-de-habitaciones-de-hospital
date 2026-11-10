@@ -10,6 +10,18 @@ Aplicación de escritorio en Java Swing para administrar pacientes, habitaciones
 **Asignatura:** Algoritmos y Programación 3  
 **Docente:** Rodolfo Luna Guzmán
 
+## Diseño de interfaz
+
+La interfaz toma como referencia el prototipo **Hospitalize — Panel clínico**. Se adaptaron sus fundamentos visuales al alcance académico de este proyecto:
+
+- Azul clínico `#3468E8`, turquesa `#16B99A`, informativo `#57A5F5`.
+- Atención `#E9A83B`, urgente `#E6606F`, fondo suave `#F4F7FC`.
+- Tinta `#1D2B49` y texto secundario `#8794AB`.
+- Tipografía Inter con fallback del sistema, tarjetas claras, bordes suaves y espaciado consistente.
+- Dashboard dinámico con capacidad, habitaciones ocupadas, disponibles, porcentaje de ocupación y distribución por piso.
+
+El prototipo incluye agenda y equipo clínico, pero esas funciones no se agregan porque no hacen parte de los requisitos funcionales actuales.
+
 ## Arquitectura
 
 El proyecto separa responsabilidades mediante **Modelo–Vista–Controlador (MVC)** y organiza los componentes visuales con **Atomic Design**.
@@ -17,7 +29,11 @@ El proyecto separa responsabilidades mediante **Modelo–Vista–Controlador (MV
 - **Modelo:** entidades, reglas de negocio y estructuras de datos.
 - **Vista:** interfaz de escritorio construida con Java Swing.
 - **Controlador:** recibe acciones de la interfaz y coordina el modelo.
-- **Atomic Design:** átomos, moléculas, organismos, plantillas y páginas reutilizables.
+- **Átomos:** tokens de color, botones y campos de texto.
+- **Moléculas:** campos de formulario y tarjetas de indicadores.
+- **Organismos:** navegación lateral.
+- **Plantillas:** estructura general de navegación y contenido.
+- **Páginas:** dashboard, pacientes, habitaciones e historial, cada una en su propia clase.
 
 ## Estructura del proyecto
 
@@ -45,16 +61,28 @@ src/hospital/
     ├── organismos/
     ├── plantillas/
     └── paginas/
+        ├── DashboardPage.java
+        ├── PacientesPage.java
+        ├── HabitacionesPage.java
+        ├── HistorialPage.java
+        └── HospitalPage.java
+
+tests/
+└── hospital/
+    ├── modelos/
+    ├── estructuras/
+    └── gestion/
 ```
 
 ## Funcionalidades
-- Registro y consulta de pacientes con validación de identificaciones duplicadas.
+- Registro y consulta de pacientes con validación de campos y de identificaciones duplicadas.
+- Validación de edad entre 0 y 130 años y triage entre 1 y 5.
 - Asignación manual de habitaciones disponibles.
 - Consulta de las 30 habitaciones (5 pisos × 6 habitaciones).
 - Registro de salidas y liberación de habitaciones.
 - Historial de ingresos y salidas con fecha y hora.
-- Dashboard con indicadores de ocupación.
-- Visualización tabular de pacientes, habitaciones e historial.
+- Dashboard con indicadores calculados desde el estado real del modelo.
+- Visualización de matriz dispersa y tripletas.
 
 ## Estructuras académicas
 - Lista simplemente enlazada manual de pacientes.
@@ -62,38 +90,33 @@ src/hospital/
 - Matriz dispersa 5 × 6 mediante tripletas: 1 representa ocupada y la ausencia de tripleta representa disponible.
 - Arreglo de 30 objetos Habitacion.
 
-Las colecciones auxiliares de la interfaz se generan a partir de las listas propias; no reemplazan las estructuras de datos exigidas.
+Las colecciones auxiliares de las tablas Swing se generan a partir de las listas propias; no reemplazan las estructuras de datos exigidas.
 
 ## Requisitos
 - JDK 17 o superior.
-- Visual Studio Code.
-- Extension Pack for Java.
-- No requiere librerías externas ni base de datos.
+- Apache Maven 3.9 o compatible.
+- Visual Studio Code y Extension Pack for Java.
 
-## Ejecutar desde Visual Studio Code
-1. Clonar el repositorio.
-2. Abrir la carpeta en VS Code.
-3. Instalar Extension Pack for Java.
-4. Abrir `src/hospital/Main.java`.
-5. Ejecutar **Run Java**.
+## Ejecutar
 
-También puede compilarse desde la raíz:
+Desde la raíz del repositorio:
 
 ```bash
-javac -d bin src/hospital/modelos/*.java src/hospital/estructuras/*.java src/hospital/gestion/*.java src/hospital/controlador/*.java src/hospital/vista/atomos/*.java src/hospital/vista/moleculas/*.java src/hospital/vista/organismos/*.java src/hospital/vista/plantillas/*.java src/hospital/vista/paginas/*.java src/hospital/Main.java
-java -cp bin hospital.Main
+mvn clean package
+java -cp target/classes hospital.Main
 ```
+
+También se puede abrir `src/hospital/Main.java` en VS Code y usar **Run Java**.
+
+## Pruebas automatizadas
+
+```bash
+mvn test
+```
+
+Las pruebas cubren validación de pacientes, lista simplemente enlazada de pacientes, lista de historial, matriz dispersa, registro, asignación, liberación de habitación y prevención de salidas repetidas.
+
+GitHub Actions ejecuta la suite automáticamente con JDK 17 en cada push a `main` y en cada pull request.
 
 ## Alcance y limitaciones
 Los datos se almacenan en memoria y se pierden al cerrar la aplicación. La asignación de habitaciones es manual. El triage se registra como dato académico y no determina automáticamente la habitación. Este software es educativo y no debe utilizarse para decisiones clínicas reales.
-
-## Pruebas de aceptación
-1. Registrar un paciente con identificación `1001`.
-2. Asignarle la habitación `8`.
-3. Verificar que la habitación aparezca ocupada.
-4. Dar salida al paciente.
-5. Verificar que la habitación quede disponible y aparezcan los movimientos de ingreso y salida en el historial.
-6. Intentar dar salida nuevamente y comprobar que el sistema rechace la operación.
-
----
-Proyecto académico — Gestor Hospitalario.
