@@ -7,10 +7,11 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.function.Consumer;
 
-/** Plantilla principal: navegación lateral, barra contextual y páginas MVC. */
+/** Plantilla de aplicación: sidebar persistente, encabezado contextual y contenido. */
 public class MainTemplate extends JPanel {
     private final JPanel cards = new JPanel(new CardLayout());
     private final Sidebar sidebar;
+    private final JLabel pageTitle = new JLabel("Resumen del día");
 
     public MainTemplate(Consumer<String> navigation) {
         setLayout(new BorderLayout());
@@ -28,30 +29,33 @@ public class MainTemplate extends JPanel {
         JPanel context = new JPanel();
         context.setOpaque(false);
         context.setLayout(new BoxLayout(context, BoxLayout.Y_AXIS));
-        context.setBorder(new EmptyBorder(17, 30, 14, 10));
+        context.setBorder(new EmptyBorder(13, 30, 11, 10));
         JLabel clinic = new JLabel("Centro de atención hospitalaria");
-        clinic.setFont(new Font(UiColors.FONT, Font.BOLD, 11));
-        clinic.setForeground(new Color(56, 74, 102));
-        JLabel subtitle = new JLabel("Panel de gestión clínica");
-        subtitle.setFont(new Font(UiColors.FONT, Font.PLAIN, 9));
-        subtitle.setForeground(new Color(153, 166, 184));
+        clinic.setFont(new Font(UiColors.FONT, Font.BOLD, 10));
+        clinic.setForeground(UiColors.MUTED);
+        pageTitle.setFont(new Font(UiColors.FONT, Font.BOLD, 13));
+        pageTitle.setForeground(UiColors.INK);
         context.add(clinic);
-        context.add(Box.createVerticalStrut(3));
-        context.add(subtitle);
+        context.add(Box.createVerticalStrut(4));
+        context.add(pageTitle);
         header.add(context, BorderLayout.WEST);
 
+        JPanel profile = new JPanel(new FlowLayout(FlowLayout.RIGHT, 22, 17));
+        profile.setOpaque(false);
+        JLabel role = new JLabel("Administrador");
+        role.setFont(new Font(UiColors.FONT, Font.PLAIN, 10));
+        role.setForeground(UiColors.MUTED);
         JLabel avatar = new JLabel("JM", SwingConstants.CENTER);
         avatar.setOpaque(true);
-        avatar.setBackground(UiColors.PRIMARY_SOFT);
+        avatar.setBackground(new Color(224, 231, 255));
         avatar.setForeground(UiColors.PRIMARY);
         avatar.setFont(new Font(UiColors.FONT, Font.BOLD, 10));
         avatar.setPreferredSize(new Dimension(36, 36));
-        JPanel profile = new JPanel(new FlowLayout(FlowLayout.RIGHT, 28, 18));
-        profile.setOpaque(false);
+        profile.add(role);
         profile.add(avatar);
         header.add(profile, BorderLayout.EAST);
-        right.add(header, BorderLayout.NORTH);
 
+        right.add(header, BorderLayout.NORTH);
         cards.setBackground(UiColors.BACKGROUND);
         right.add(cards, BorderLayout.CENTER);
         add(right, BorderLayout.CENTER);
@@ -63,6 +67,7 @@ public class MainTemplate extends JPanel {
 
     public void showPage(String key, String name) {
         ((CardLayout) cards.getLayout()).show(cards, key);
+        pageTitle.setText(name);
     }
 
     public void setActiveSection(String key) {
