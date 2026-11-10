@@ -2,6 +2,7 @@ package hospital.vista.paginas;
 
 import hospital.controlador.HospitalController;
 import hospital.modelos.RegistroHistorial;
+import hospital.vista.atomos.UiButton;
 import hospital.vista.atomos.UiColors;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
