@@ -51,9 +51,9 @@ public class HabitacionTile extends JButton {
             fill=occupied?new Color(255,229,232):new Color(218,246,239);
             stroke=occupied?UiColors.DANGER:UiColors.TEAL;
         }
-        g.setColor(new Color(29,43,73,9));g.fillRoundRect(1,3,getWidth()-2,getHeight()-3,15,15);
-        g.setColor(fill);g.fillRoundRect(0,0,getWidth()-2,getHeight()-4,15,15);
-        g.setColor(stroke);g.setStroke(new BasicStroke(1f));g.drawRoundRect(0,0,getWidth()-2,getHeight()-4,15,15);
+        g.setColor(new Color(29,43,73,9));g.fillRoundRect(1,3,getWidth()-2,getHeight()-3,19,19);
+        g.setColor(fill);g.fillRoundRect(0,0,getWidth()-2,getHeight()-4,19,19);
+        g.setColor(stroke);g.setStroke(new BasicStroke(1f));g.drawRoundRect(0,0,getWidth()-2,getHeight()-4,19,19);
         g.dispose();super.paintComponent(graphics);
     }
 }

@@ -6,6 +6,7 @@ import hospital.modelos.Paciente;
 import hospital.vista.atomos.UiButton;
 import hospital.vista.atomos.UiCard;
 import hospital.vista.atomos.UiColors;
+import hospital.vista.atomos.UiDialogs;
 import hospital.vista.atomos.HabitacionTile;
 import hospital.vista.atomos.ScrollablePanel;
 import hospital.vista.moleculas.HabitacionDetailDialog;
@@ -180,11 +181,11 @@ public class HabitacionesPage extends JPanel {
                 .filter(room -> !room.isOcupada()).collect(Collectors.toList());
 
         if (candidates.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No hay pacientes sin habitación asignada.", "Asignación", JOptionPane.INFORMATION_MESSAGE);
+            UiDialogs.message(this, "Asignación", "No hay pacientes sin habitación asignada.", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         if (freeRooms.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No hay habitaciones disponibles.", "Capacidad completa", JOptionPane.WARNING_MESSAGE);
+            UiDialogs.message(this, "Capacidad completa", "No hay habitaciones disponibles.", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -209,7 +210,7 @@ public class HabitacionesPage extends JPanel {
         form.setBorder(new EmptyBorder(8, 4, 4, 4));
         form.add(fieldGroup("Paciente", patientBox));
         form.add(fieldGroup("Habitación disponible", roomBox));
-        if (JOptionPane.showConfirmDialog(this, form, "Asignar habitación", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) != JOptionPane.OK_OPTION) return;
+        if (!UiDialogs.confirm(this, "Asignar habitación", "Selecciona el paciente y una cama disponible.", form)) return;
 
         Paciente patient = (Paciente) patientBox.getSelectedItem();
         Habitacion room = (Habitacion) roomBox.getSelectedItem();
@@ -218,7 +219,7 @@ public class HabitacionesPage extends JPanel {
             controller.asignarHabitacion(patient.getIdentificacion(), room.getNumero());
             refresh();
         } catch (RuntimeException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "No se pudo asignar", JOptionPane.WARNING_MESSAGE);
+            UiDialogs.message(this, "No se pudo asignar", ex.getMessage(), JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -226,7 +227,7 @@ public class HabitacionesPage extends JPanel {
         List<Habitacion> occupied = controller.habitaciones().stream()
                 .filter(Habitacion::isOcupada).collect(Collectors.toList());
         if (occupied.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No hay pacientes con hospitalización activa.", "Registrar salida", JOptionPane.INFORMATION_MESSAGE);
+            UiDialogs.message(this, "Registrar salida", "No hay pacientes con hospitalización activa.", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         JComboBox<Habitacion> roomBox = new JComboBox<>(occupied.toArray(new Habitacion[0]));
@@ -238,18 +239,16 @@ public class HabitacionesPage extends JPanel {
                 return this;
             }
         });
-        if (JOptionPane.showConfirmDialog(this, roomBox, "Selecciona la hospitalización", JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) return;
+        JPanel selection = new JPanel(new BorderLayout(0, 8)); selection.setOpaque(false); selection.add(fieldGroup("Paciente y habitación", roomBox), BorderLayout.CENTER);
+        if (!UiDialogs.confirm(this, "Selecciona la hospitalización", "Elige el paciente que finalizará su estancia.", selection)) return;
         Habitacion selected = (Habitacion) roomBox.getSelectedItem();
         if (selected == null || selected.getPaciente() == null) return;
-        int confirm = JOptionPane.showConfirmDialog(this,
-                "¿Registrar la salida de " + selected.getPaciente().getNombre() + "?",
-                "Confirmar salida", JOptionPane.YES_NO_OPTION);
-        if (confirm != JOptionPane.YES_OPTION) return;
+        if (!UiDialogs.confirm(this, "Confirmar salida", "¿Registrar la salida de " + selected.getPaciente().getNombre() + "?", null)) return;
         try {
             controller.darSalida(selected.getPaciente().getIdentificacion());
             refresh();
         } catch (RuntimeException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "No se pudo registrar la salida", JOptionPane.WARNING_MESSAGE);
+            UiDialogs.message(this, "No se pudo registrar la salida", ex.getMessage(), JOptionPane.WARNING_MESSAGE);
         }
     }
 

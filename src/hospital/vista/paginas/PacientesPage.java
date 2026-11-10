@@ -95,12 +95,12 @@ public class PacientesPage extends JPanel {
         fields.add(labelField("Identificación",id));fields.add(labelField("Nombre completo",name));
         fields.add(labelField("Edad",age));fields.add(labelField("Nivel de triage (1–5)",triage));
         fields.add(labelField("Motivo de ingreso",reason));
-        if(JOptionPane.showConfirmDialog(this,fields,"Registrar nuevo paciente",JOptionPane.OK_CANCEL_OPTION,JOptionPane.PLAIN_MESSAGE)!=JOptionPane.OK_OPTION)return;
+        if(!UiDialogs.confirm(this,"Registrar nuevo paciente","Completa la información clínica para crear el registro.",fields))return;
         try{
             controller.registrarPaciente(id.getText(),name.getText(),Integer.parseInt(age.getText().trim()),
                 Integer.parseInt(triage.getText().trim()),reason.getText());
-            refresh();JOptionPane.showMessageDialog(this,"Paciente registrado correctamente.","Registro exitoso",JOptionPane.INFORMATION_MESSAGE);
-        }catch(Exception ex){JOptionPane.showMessageDialog(this,ex.getMessage(),"No se pudo registrar",JOptionPane.WARNING_MESSAGE);}
+            refresh();UiDialogs.message(this,"Registro exitoso","El paciente fue registrado correctamente.",JOptionPane.INFORMATION_MESSAGE);
+        }catch(Exception ex){UiDialogs.message(this,"No se pudo registrar",ex.getMessage(),JOptionPane.WARNING_MESSAGE);}
     }
     private JTextField field(){JTextField f=new JTextField(16);f.setFont(new Font(UiColors.FONT,Font.PLAIN,12));return f;}
     private JPanel labelField(String text,JTextField field){

@@ -21,14 +21,26 @@ public class HabitacionDetailDialog extends JDialog {
     public HabitacionDetailDialog(Window owner, Habitacion room, List<RegistroHistorial> allHistory) {
         super(owner, "Detalle de habitación " + room.getNumero(), ModalityType.APPLICATION_MODAL);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setUndecorated(true);
+        setBackground(new Color(0, 0, 0, 0));
         int ownerWidth = owner == null ? 600 : owner.getWidth();
         int ownerHeight = owner == null ? 700 : owner.getHeight();
         setSize(Math.max(320, Math.min(600, ownerWidth - 28)), Math.max(420, Math.min(700, ownerHeight - 36)));
         setMinimumSize(new Dimension(320, 400));
         setLocationRelativeTo(owner);
 
-        JPanel root = new JPanel(new BorderLayout(0, 14));
-        root.setBackground(UiColors.BACKGROUND);
+        JPanel root = new JPanel(new BorderLayout(0, 14)) {
+            @Override protected void paintComponent(Graphics graphics) {
+                Graphics2D g = (Graphics2D) graphics.create();
+                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g.setColor(new Color(29, 43, 73, 24));
+                g.fillRoundRect(3, 5, getWidth() - 6, getHeight() - 8, 26, 26);
+                g.setColor(UiColors.BACKGROUND);
+                g.fillRoundRect(1, 1, getWidth() - 6, getHeight() - 8, 26, 26);
+                g.dispose();
+            }
+        };
+        root.setOpaque(false);
         root.setBorder(new EmptyBorder(18, 18, 14, 18));
 
         JPanel heading = new JPanel();

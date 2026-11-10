@@ -65,16 +65,25 @@ public class MainTemplate extends JPanel {
         });
     }
     private void addMobileItem(String label,String key,String glyph,Consumer<String> navigation) {
-        JButton b=new JButton(label,new UiIcon(key,UiColors.MUTED,20));
-        b.setFont(new Font(UiColors.FONT,Font.PLAIN,9));b.setForeground(UiColors.MUTED);b.setBackground(Color.WHITE);
+        JButton b=new MobileNavButton(label,key);
+        b.setFont(new Font(UiColors.FONT,Font.BOLD,9));b.setForeground(UiColors.MUTED);b.setBackground(Color.WHITE);
         b.setHorizontalTextPosition(SwingConstants.CENTER);b.setVerticalTextPosition(SwingConstants.BOTTOM);b.setIconTextGap(4);
-        b.setBorder(new EmptyBorder(5,2,4,2));b.setFocusPainted(false);b.setContentAreaFilled(false);b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        b.setBorder(new EmptyBorder(6,2,5,2));b.setFocusPainted(false);b.setBorderPainted(false);b.setContentAreaFilled(false);b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         b.addActionListener(e->navigation.accept(key));mobileItems.put(key,b);mobileNav.add(b);
+    }
+    private static class MobileNavButton extends JButton {
+        private final String key; private boolean active;
+        MobileNavButton(String label,String key){super(label,new UiIcon(key,UiColors.MUTED,19));this.key=key;
+            setHorizontalTextPosition(SwingConstants.CENTER);setVerticalTextPosition(SwingConstants.BOTTOM);setIconTextGap(4);}
+        void setActive(boolean value){active=value;setForeground(value?UiColors.PRIMARY:UiColors.MUTED);setIcon(new UiIcon(key,value?UiColors.PRIMARY:UiColors.MUTED,19));repaint();}
+        @Override protected void paintComponent(Graphics graphics){Graphics2D g=(Graphics2D)graphics.create();g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(active?UiColors.PRIMARY_SOFT:getModel().isRollover()?new Color(246,248,253):Color.WHITE);
+            g.fillRoundRect(2,1,getWidth()-4,getHeight()-2,14,14);g.dispose();super.paintComponent(graphics);}
     }
     public void addPage(String key,JPanel page){cards.add(page,key);}
     public void showPage(String key,String name){((CardLayout)cards.getLayout()).show(cards,key);pageTitle.setText(name);}
     public void setActiveSection(String key) {
         sidebar.setActive(key);
-        mobileItems.forEach((id,b)->{boolean active=id.equals(key);b.setForeground(active?UiColors.PRIMARY:UiColors.MUTED);b.setBackground(active?UiColors.PRIMARY_SOFT:Color.WHITE);b.setIcon(new UiIcon(id,active?UiColors.PRIMARY:UiColors.MUTED,20));});
+        mobileItems.forEach((id,b)->((MobileNavButton)b).setActive(id.equals(key)));
     }
 }
