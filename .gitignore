@@ -1,0 +1,13 @@
+*.class
+*.jar
+*.war
+*.ear
+target/
+bin/
+out/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+.DS_Store
+Thumbs.db
