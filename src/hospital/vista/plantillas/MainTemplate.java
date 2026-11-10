@@ -27,11 +27,16 @@ public class MainTemplate extends JPanel {
         JPanel right=new JPanel(new BorderLayout());right.setBackground(UiColors.BACKGROUND);
         JPanel header=new JPanel(new BorderLayout());header.setPreferredSize(new Dimension(0,64));
         header.setBackground(Color.WHITE);header.setBorder(BorderFactory.createMatteBorder(0,0,1,0,UiColors.BORDER));
-        JPanel context=new JPanel();context.setOpaque(false);context.setLayout(new BoxLayout(context,BoxLayout.Y_AXIS));
+        JPanel context=new JPanel(new BorderLayout(10,0));context.setOpaque(false);
         context.setBorder(new EmptyBorder(12,24,10,8));
+        JLabel facilityAvatar=new JLabel("GH",SwingConstants.CENTER);facilityAvatar.setOpaque(true);
+        facilityAvatar.setBackground(UiColors.PRIMARY_SOFT);facilityAvatar.setForeground(UiColors.PRIMARY);
+        facilityAvatar.setFont(new Font(UiColors.FONT,Font.BOLD,10));facilityAvatar.setPreferredSize(new Dimension(34,34));
+        JPanel contextText=new JPanel();contextText.setOpaque(false);contextText.setLayout(new BoxLayout(contextText,BoxLayout.Y_AXIS));
         JLabel clinic=new JLabel("CENTRO DE ATENCIÓN HOSPITALARIA");clinic.setFont(new Font(UiColors.FONT,Font.BOLD,9));clinic.setForeground(UiColors.MUTED);
         pageTitle.setFont(new Font(UiColors.FONT,Font.BOLD,13));pageTitle.setForeground(UiColors.INK);
-        context.add(clinic);context.add(Box.createVerticalStrut(3));context.add(pageTitle);header.add(context,BorderLayout.WEST);
+        contextText.add(clinic);contextText.add(Box.createVerticalStrut(3));contextText.add(pageTitle);
+        context.add(facilityAvatar,BorderLayout.WEST);context.add(contextText,BorderLayout.CENTER);header.add(context,BorderLayout.WEST);
 
         JPanel profile=new JPanel(new FlowLayout(FlowLayout.RIGHT,12,13));profile.setOpaque(false);
         role.setFont(new Font(UiColors.FONT,Font.PLAIN,10));role.setForeground(UiColors.MUTED);
