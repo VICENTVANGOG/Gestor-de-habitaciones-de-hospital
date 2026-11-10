@@ -37,7 +37,7 @@ public class HistorialPage extends JPanel {
         labels.setOpaque(false);labels.setLayout(new BoxLayout(labels,BoxLayout.Y_AXIS));
         JLabel eyebrow=new JLabel("TRAZABILIDAD");eyebrow.setFont(new Font(UiColors.FONT,Font.BOLD,9));eyebrow.setForeground(UiColors.PRIMARY);
         JLabel title=new JLabel("Historial hospitalario");title.setFont(new Font(UiColors.FONT,Font.BOLD,25));title.setForeground(UiColors.INK);
-        JLabel subtitle=new JLabel("Registro cronológico de ingresos y salidas de pacientes.");
+        JLabel subtitle=new JLabel("<html>Registro cronológico de ingresos y salidas<br>de pacientes.</html>");
         subtitle.setFont(new Font(UiColors.FONT,Font.PLAIN,11));subtitle.setForeground(UiColors.MUTED);
         labels.add(eyebrow);labels.add(Box.createVerticalStrut(7));labels.add(title);labels.add(Box.createVerticalStrut(4));labels.add(subtitle);
         UiButton refresh=new UiButton("Actualizar",false);heading.setOpaque(false);

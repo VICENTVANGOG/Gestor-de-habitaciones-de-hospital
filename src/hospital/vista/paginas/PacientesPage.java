@@ -37,7 +37,7 @@ public class PacientesPage extends JPanel {
         labels.setOpaque(false);labels.setLayout(new BoxLayout(labels,BoxLayout.Y_AXIS));
         JLabel eyebrow=new JLabel("DIRECTORIO CLÍNICO");eyebrow.setFont(new Font(UiColors.FONT,Font.BOLD,9));eyebrow.setForeground(UiColors.PRIMARY);
         JLabel title=new JLabel("Pacientes");title.setFont(new Font(UiColors.FONT,Font.BOLD,25));title.setForeground(UiColors.INK);
-        JLabel subtitle=new JLabel("Consulta y administra los registros de pacientes hospitalizados.");
+        JLabel subtitle=new JLabel("<html>Consulta y administra los registros de pacientes<br>hospitalizados.</html>");
         subtitle.setFont(new Font(UiColors.FONT,Font.PLAIN,11));subtitle.setForeground(UiColors.MUTED);
         labels.add(eyebrow);labels.add(Box.createVerticalStrut(7));labels.add(title);labels.add(Box.createVerticalStrut(4));labels.add(subtitle);
         UiButton add=new UiButton("+  Registrar paciente");

@@ -45,7 +45,7 @@ public class HabitacionesPage extends JPanel {
         JLabel title = new JLabel("Habitaciones");
         title.setFont(new Font(UiColors.FONT, Font.BOLD, 27));
         title.setForeground(UiColors.INK);
-        JLabel subtitle = new JLabel("Consulta la ocupación por piso y selecciona una habitación para ver su información.");
+        JLabel subtitle = new JLabel("<html>Consulta la ocupación por piso y selecciona una habitación<br>para ver su información.</html>");
         subtitle.setFont(new Font(UiColors.FONT, Font.PLAIN, 11));
         subtitle.setForeground(UiColors.MUTED);
         titleGroup.add(eyebrow);
