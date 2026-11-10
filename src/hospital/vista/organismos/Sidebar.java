@@ -19,8 +19,7 @@ public class Sidebar extends JPanel {
         content.setLayout(new BoxLayout(content,BoxLayout.Y_AXIS));
 
         JPanel brand=new JPanel(new FlowLayout(FlowLayout.LEFT,10,0));brand.setOpaque(false);
-        JLabel mark=new JLabel("✚",SwingConstants.CENTER);mark.setOpaque(true);mark.setBackground(UiColors.PRIMARY);
-        mark.setForeground(Color.WHITE);mark.setFont(new Font(UiColors.FONT,Font.BOLD,19));mark.setPreferredSize(new Dimension(38,38));
+        BrandMark mark=new BrandMark();
         JLabel brandText=new JLabel("<html><b>Hospitalize</b><br><font color='#8794AB' size='2'>Healthcare, con claridad</font></html>");
         brandText.setFont(new Font(UiColors.FONT,Font.PLAIN,14));brandText.setForeground(UiColors.INK);
         brand.add(mark);brand.add(brandText);content.add(brand);content.add(Box.createVerticalStrut(24));
@@ -65,6 +64,24 @@ public class Sidebar extends JPanel {
         items.put(key,button);wrap.add(button,BorderLayout.CENTER);parent.add(wrap);parent.add(Box.createVerticalStrut(4));
     }
     public void setCompact(boolean compact) { /* La plantilla sustituye la barra por navegación inferior en móvil. */ }
+
+    private static class BrandMark extends JPanel {
+        BrandMark() { setOpaque(false); setPreferredSize(new Dimension(38, 38)); }
+        @Override protected void paintComponent(Graphics graphics) {
+            super.paintComponent(graphics);
+            Graphics2D g = (Graphics2D) graphics.create();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setPaint(new GradientPaint(0, 0, UiColors.TEAL, getWidth(), getHeight(), UiColors.PRIMARY));
+            g.fillRoundRect(0, 0, getWidth(), getHeight(), 12, 12);
+            g.setColor(Color.WHITE);
+            g.setStroke(new BasicStroke(2.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            int mid = getHeight() / 2;
+            int[] x = {6, 10, 14, 18, 22, 26, 32};
+            int[] y = {mid, mid, mid - 6, mid + 6, mid - 4, mid, mid};
+            for (int i = 0; i < x.length - 1; i++) g.drawLine(x[i], y[i], x[i + 1], y[i + 1]);
+            g.dispose();
+        }
+    }
     public void setActive(String key) {
         items.forEach((id,button)->{
             boolean active=id.equals(key);
