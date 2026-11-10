@@ -31,6 +31,18 @@ jobs:
           convert target/ui-previews/dashboard-mobile.png -resize 240x520 -quality 28 jpg:- | base64 -w0
           echo
           echo "MOBILE_PREVIEW_END"
+          echo "PATIENTS_MOBILE_BEGIN"
+          convert target/ui-previews/patients-mobile.png -resize 240x520 -quality 28 jpg:- | base64 -w0
+          echo
+          echo "PATIENTS_MOBILE_END"
+          echo "ROOMS_MOBILE_BEGIN"
+          convert target/ui-previews/rooms-mobile.png -resize 240x520 -quality 28 jpg:- | base64 -w0
+          echo
+          echo "ROOMS_MOBILE_END"
+          echo "HISTORY_MOBILE_BEGIN"
+          convert target/ui-previews/history-mobile.png -resize 240x520 -quality 28 jpg:- | base64 -w0
+          echo
+          echo "HISTORY_MOBILE_END"
       - name: Upload UI previews
         uses: actions/upload-artifact@v4
         with:
