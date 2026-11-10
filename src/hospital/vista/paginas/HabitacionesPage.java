@@ -30,7 +30,7 @@ public class HabitacionesPage extends JPanel {
 
         JPanel page = new JPanel(new BorderLayout(0, 20));
         page.setOpaque(false);
-        page.setBorder(new EmptyBorder(22, 30, 28, 30));
+        page.setBorder(new EmptyBorder(20, 26, 26, 26));
 
         JPanel heading = new JPanel(new BorderLayout(16, 0));
         heading.setOpaque(false);
@@ -105,7 +105,12 @@ public class HabitacionesPage extends JPanel {
         page.addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override public void componentResized(java.awt.event.ComponentEvent e) {
                 int width = page.getWidth();
-                metrics.setLayout(new GridLayout(width < 620 ? 3 : 1, width < 620 ? 1 : 3, 10, 10));
+                boolean narrow = width < 680;
+                page.setBorder(new EmptyBorder(16, narrow ? 12 : 26, 22, narrow ? 12 : 26));
+                mapHeader.setLayout(new BorderLayout(8, narrow ? 5 : 0));
+                if (narrow) { mapHeader.add(mapTitle, BorderLayout.NORTH); mapHeader.add(mapHint, BorderLayout.SOUTH); }
+                else { mapHeader.add(mapTitle, BorderLayout.WEST); mapHeader.add(mapHint, BorderLayout.EAST); }
+                metrics.setLayout(new GridLayout(width < 520 ? 2 : 1, width < 520 ? 2 : 3, 10, 10));
                 heading.setLayout(new BorderLayout(8, width < 620 ? 10 : 0));
                 if (width < 620) { heading.add(titleGroup, BorderLayout.NORTH); heading.add(actions, BorderLayout.SOUTH); }
                 else { heading.add(titleGroup, BorderLayout.CENTER); heading.add(actions, BorderLayout.EAST); }
@@ -277,7 +282,7 @@ public class HabitacionesPage extends JPanel {
             floorRow.setBorder(new EmptyBorder(7, 0, 7, 0));
             JPanel floorLabel = new JPanel();
             floorLabel.setOpaque(false);
-            floorLabel.setPreferredSize(new Dimension(72, 72));
+            floorLabel.setPreferredSize(new Dimension(64, 72));
             floorLabel.setLayout(new BoxLayout(floorLabel, BoxLayout.Y_AXIS));
             JLabel floorName = new JLabel("PISO " + floor);
             floorName.setFont(new Font(UiColors.FONT, Font.BOLD, 10));
@@ -291,7 +296,7 @@ public class HabitacionesPage extends JPanel {
             floorLabel.add(floorRange);
             floorLabel.add(Box.createVerticalGlue());
 
-            int availableWidth = Math.max(220, floorsPanel.getWidth() - 100);
+            int availableWidth = Math.max(190, floorsPanel.getWidth() - 90);
             int columns = Math.max(2, Math.min(6, availableWidth / 112));
             JPanel roomGrid = new JPanel(new GridLayout(0, columns, 9, 9));
             roomGrid.setOpaque(false);
