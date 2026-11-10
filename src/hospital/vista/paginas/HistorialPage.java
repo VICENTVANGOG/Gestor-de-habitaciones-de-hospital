@@ -100,7 +100,7 @@ public class HistorialPage extends JPanel {
         nextPage.addActionListener(e->{int pages=Math.max(1,(filteredRecords.size()+pageSize()-1)/pageSize());if(currentPage<pages-1){currentPage++;rebuildFilteredRecords();}});
         pagination.setBorder(new EmptyBorder(12,0,0,0));pagination.add(pageInfo);pagination.add(previousPage);pagination.add(nextPage);
     }
-    private void updatePagination(){int pages=Math.max(1,(filteredRecords.size()+PAGE_SIZE-1)/PAGE_SIZE);pageInfo.setText("Página "+(currentPage+1)+" de "+pages+"  ·  "+filteredRecords.size()+" registros");previousPage.setEnabled(currentPage>0);nextPage.setEnabled(currentPage<pages-1);previousPage.setVisible(pages>1);nextPage.setVisible(pages>1);pageInfo.setVisible(pages>1);pagination.revalidate();pagination.repaint();}
+    private void updatePagination(){int pages=Math.max(1,(filteredRecords.size()+pageSize()-1)/pageSize());pageInfo.setText("Página "+(currentPage+1)+" de "+pages+"  ·  "+filteredRecords.size()+" registros");previousPage.setEnabled(currentPage>0);nextPage.setEnabled(currentPage<pages-1);previousPage.setVisible(pages>1);nextPage.setVisible(pages>1);pageInfo.setVisible(pages>1);pagination.revalidate();pagination.repaint();}
 
     private static class MovementRenderer extends javax.swing.table.DefaultTableCellRenderer {
         MovementRenderer(){setHorizontalAlignment(SwingConstants.CENTER);}
@@ -127,7 +127,7 @@ public class HistorialPage extends JPanel {
         refreshMobile();updatePagination();
     }
     private void refreshMobile(){
-        mobileList.removeAll();int shown=0;int from=currentPage*PAGE_SIZE,to=Math.min(from+PAGE_SIZE,filteredRecords.size());
+        mobileList.removeAll();int shown=0;int from=currentPage*pageSize(),to=Math.min(from+pageSize(),filteredRecords.size());
         for(int i=from;i<to;i++){
             RegistroHistorial r=filteredRecords.get(i);
             UiCard item=new UiCard(14,12);item.setLayout(new BorderLayout(10,0));
