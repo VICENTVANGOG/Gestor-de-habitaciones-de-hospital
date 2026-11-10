@@ -22,7 +22,7 @@ public class HistorialPage extends JPanel {
     private final TableRowSorter<DefaultTableModel> sorter=new TableRowSorter<>(model);
     private final JTextField search=new JTextField();
     private final JLabel count=new JLabel();
-    private final JPanel page=new JPanel(new BorderLayout(0,18));
+    private final JPanel page=new ScrollablePanel(new BorderLayout(0,18));
     private final JPanel heading=new JPanel(new BorderLayout(10,0));
     private final JPanel labels=new JPanel();
     private final JPanel toolbar=new JPanel(new BorderLayout(10,0));

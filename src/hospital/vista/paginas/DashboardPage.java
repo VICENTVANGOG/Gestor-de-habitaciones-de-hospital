@@ -36,7 +36,7 @@ public class DashboardPage extends JPanel {
         this.controller=controller;
         setLayout(new BorderLayout());setOpaque(false);
 
-        JPanel page=new JPanel();page.setOpaque(false);
+        JPanel page=new ScrollablePanel();page.setOpaque(false);
         page.setBorder(new EmptyBorder(22,26,26,26));
         page.setLayout(new BoxLayout(page,BoxLayout.Y_AXIS));
 

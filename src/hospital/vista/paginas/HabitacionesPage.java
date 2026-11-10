@@ -7,6 +7,7 @@ import hospital.vista.atomos.UiButton;
 import hospital.vista.atomos.UiCard;
 import hospital.vista.atomos.UiColors;
 import hospital.vista.atomos.HabitacionTile;
+import hospital.vista.atomos.ScrollablePanel;
 import hospital.vista.moleculas.HabitacionDetailDialog;
 
 import javax.swing.*;
@@ -28,7 +29,7 @@ public class HabitacionesPage extends JPanel {
         setLayout(new BorderLayout());
         setOpaque(false);
 
-        JPanel page = new JPanel(new BorderLayout(0, 20));
+        JPanel page = new ScrollablePanel(new BorderLayout(0, 20));
         page.setOpaque(false);
         page.setBorder(new EmptyBorder(20, 26, 26, 26));
 

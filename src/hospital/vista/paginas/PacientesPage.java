@@ -21,7 +21,7 @@ public class PacientesPage extends JPanel {
     private final TableRowSorter<DefaultTableModel> sorter=new TableRowSorter<>(model);
     private final JTextField search=new JTextField();
     private final JLabel count=new JLabel("0 pacientes");
-    private final JPanel page=new JPanel(new BorderLayout(0,18));
+    private final JPanel page=new ScrollablePanel(new BorderLayout(0,18));
     private final JPanel heading=new JPanel(new BorderLayout(12,0));
     private final JPanel labels=new JPanel();
     private final JPanel toolbar=new JPanel(new BorderLayout(12,0));
