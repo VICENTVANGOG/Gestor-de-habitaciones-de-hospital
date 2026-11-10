@@ -75,8 +75,13 @@ public class Main {
         return valor;
     }
     private static int leerEntero(String mensaje) {
-        System.out.print(mensaje);
-        try { return Integer.parseInt(SC.nextLine().trim()); }
-        catch (NumberFormatException ex) { throw new IllegalArgumentException("Debe ingresar un número entero."); }
+        while (true) {
+            System.out.print(mensaje);
+            try {
+                return Integer.parseInt(SC.nextLine().trim());
+            } catch (NumberFormatException ex) {
+                System.out.println("Entrada inválida. Debe ingresar un número entero.");
+            }
+        }
     }
 }
