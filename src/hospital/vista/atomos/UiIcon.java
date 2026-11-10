@@ -27,7 +27,7 @@ public final class UiIcon implements Icon {
             case "close" -> {g.drawLine(5,5,15,15);g.drawLine(15,5,5,15);}
             case "check" -> {g.drawLine(3,10,8,15);g.drawLine(8,15,17,5);}
             case "bed" -> {g.drawRoundRect(2,7,15,8,2,2);g.drawLine(2,11,18,11);g.drawOval(4,7,4,4);g.drawLine(3,15,3,18);g.drawLine(17,15,17,18);}
-            case "bed-occupied" -> {g.drawRoundRect(2,7,16,8,2,2);g.drawLine(2,11,18,11);g.drawOval(4,7,4,4);g.drawLine(3,15,3,18);g.drawLine(17,15,17,18);g.drawLine(12,4,17,4);g.drawLine(14.5,2,14.5,6);}
+            case "bed-occupied" -> {g.drawRoundRect(2,7,16,8,2,2);g.drawLine(2,11,18,11);g.drawOval(4,7,4,4);g.drawLine(3,15,3,18);g.drawLine(17,15,17,18);g.drawLine(12,4,17,4);g.drawLine(15,2,15,6);}
             case "bed-available" -> {g.drawRoundRect(2,7,16,8,2,2);g.drawLine(2,11,18,11);g.drawOval(4,7,4,4);g.drawLine(3,15,3,18);g.drawLine(17,15,17,18);g.drawLine(12,4,17,4);g.drawLine(14.5,2,14.5,6);}
             case "occupancy" -> {g.drawArc(3,3,14,14,90,270);g.drawArc(3,3,14,14,90,-(int)(270));g.drawLine(10,10,10,4);g.drawLine(10,10,15,13);}
             default -> g.drawOval(3,3,14,14);
