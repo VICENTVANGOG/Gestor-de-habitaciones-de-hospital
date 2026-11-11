@@ -65,9 +65,12 @@ public class Paciente {
 
     @Override
     public String toString() {
-        return "Paciente{" + "identificacion='" + identificacion + '''
-                + ", nombre='" + nombre + ''' + ", edad=" + edad
-                + ", nivelTriage=" + nivelTriage + ", motivoIngreso='"
-                + motivoIngreso + ''' + '}';
+        return "Paciente{"
+                + "identificacion='" + identificacion + '''
+                + ", nombre='" + nombre + '''
+                + ", edad=" + edad
+                + ", nivelTriage=" + nivelTriage
+                + ", motivoIngreso='" + motivoIngreso + '''
+                + '}';
     }
 }
