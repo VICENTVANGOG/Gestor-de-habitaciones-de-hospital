@@ -50,6 +50,24 @@ public class ListaPacientes {
         return null;
     }
 
+    // Elimina el paciente con la identificación indicada; devuelve true si lo encontró.
+    public boolean eliminar(String id) {
+        if (cabeza == null) {
+            return false;
+        }
+        if (cabeza.getDato().getIdentificacion().equals(id)) {
+            cabeza = cabeza.getSiguiente();
+            return true;
+        }
+        for (NodoPaciente actual = cabeza; actual.getSiguiente() != null; actual = actual.getSiguiente()) {
+            if (actual.getSiguiente().getDato().getIdentificacion().equals(id)) {
+                actual.setSiguiente(actual.getSiguiente().getSiguiente());
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Copia los pacientes a una lista para mostrarlos en la interfaz.
     public List<Paciente> obtenerTodos() {
         List<Paciente> resultado = new ArrayList<>();

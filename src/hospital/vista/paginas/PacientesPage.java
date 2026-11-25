@@ -2,7 +2,9 @@ package hospital.vista.paginas;
 
 import hospital.controlador.HospitalController;
 import hospital.modelos.Paciente;
+import hospital.modelos.ValidadorPaciente;
 import hospital.vista.atomos.*;
+import hospital.vista.moleculas.ValidatedField;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -110,30 +112,33 @@ public class PacientesPage extends JPanel {
     private void updatePagination(){int pages=Math.max(1,(filteredPatients.size()+pageSize()-1)/pageSize());pageInfo.setText("Página "+(currentPage+1)+" de "+pages+"  ·  "+filteredPatients.size()+" registros");previousPage.setEnabled(currentPage>0);nextPage.setEnabled(currentPage<pages-1);previousPage.setVisible(pages>1);nextPage.setVisible(pages>1);pageInfo.setVisible(pages>1);pagination.revalidate();pagination.repaint();}
 
     private void register(){
-        JTextField id=field(),name=field(),age=field(),triage=field(),reason=field();
-        JPanel fields=new JPanel(new GridLayout(0,2,14,13));fields.setOpaque(false);
+        ValidatedField id=new ValidatedField("IDENTIFICACIÓN","Número de documento (solo números)",
+            ValidadorPaciente::revisarIdentificacion,ValidadorPaciente::validarIdentificacion);
+        ValidatedField name=new ValidatedField("NOMBRE COMPLETO","Nombre y apellidos (solo letras)",
+            ValidadorPaciente::revisarNombre,ValidadorPaciente::validarNombre);
+        ValidatedField age=new ValidatedField("EDAD","Edad en años (0 a 130)",
+            ValidadorPaciente::revisarEdad,ValidadorPaciente::validarEdad);
+        ValidatedField triage=new ValidatedField("NIVEL DE TRIAGE (1–5)","Valor entre 1 y 5",
+            ValidadorPaciente::revisarTriaje,ValidadorPaciente::validarTriaje);
+        ValidatedField reason=new ValidatedField("MOTIVO DE INGRESO","Motivo clínico del ingreso",
+            ValidadorPaciente::revisarMotivo,ValidadorPaciente::validarMotivo);
+        ValidatedField[] all={id,name,age,triage,reason};
+        JPanel fields=new JPanel(new GridLayout(0,2,14,10));fields.setOpaque(false);
         fields.setBorder(new EmptyBorder(8,2,8,2));
-        fields.add(labelField("IDENTIFICACIÓN",id));fields.add(labelField("NOMBRE COMPLETO",name));
-        fields.add(labelField("EDAD",age));fields.add(labelField("NIVEL DE TRIAGE (1–5)",triage));
-        fields.add(labelField("MOTIVO DE INGRESO",reason));
-        fields.setPreferredSize(new Dimension(490,205));
-        id.setToolTipText("Número de documento del paciente");
-        name.setToolTipText("Nombre y apellidos");
-        age.setToolTipText("Edad en años");
-        triage.setToolTipText("Valor entre 1 y 5");
-        reason.setToolTipText("Motivo clínico del ingreso");
-        if(!UiDialogs.confirm(this,"Nuevo paciente","Registra los datos básicos para crear la ficha clínica.",fields))return;
+        for(ValidatedField f:all)fields.add(f);
+        fields.setPreferredSize(new Dimension(490,fields.getPreferredSize().height));
+        boolean accepted=UiDialogs.confirm(this,"Nuevo paciente","Registra los datos básicos para crear la ficha clínica.",fields,()->{
+            ValidatedField firstInvalid=null;
+            for(ValidatedField f:all)if(!f.validateField()&&firstInvalid==null)firstInvalid=f;
+            if(firstInvalid!=null)firstInvalid.focus();
+            return firstInvalid==null;
+        });
+        if(!accepted)return;
         try{
-            controller.registrarPaciente(id.getText(),name.getText(),Integer.parseInt(age.getText().trim()),
-                Integer.parseInt(triage.getText().trim()),reason.getText());
+            controller.registrarPaciente(id.value(),name.value(),Integer.parseInt(age.value()),
+                Integer.parseInt(triage.value()),reason.value());
             refresh();UiDialogs.message(this,"Registro exitoso","El paciente fue registrado correctamente.",JOptionPane.INFORMATION_MESSAGE);
         }catch(Exception ex){UiDialogs.message(this,"No se pudo registrar",ex.getMessage(),JOptionPane.WARNING_MESSAGE);}
-    }
-    private JTextField field(){JTextField f=new UiTextField(16);f.setFont(new Font(UiColors.FONT,Font.PLAIN,12));f.setPreferredSize(new Dimension(210,40));return f;}
-    private JPanel labelField(String text,JTextField field){
-        JPanel p=new JPanel(new BorderLayout(0,7));p.setOpaque(false);
-        JLabel l=new JLabel(text);l.setFont(new Font(UiColors.FONT,Font.BOLD,9));l.setForeground(UiColors.INK);
-        p.add(l,BorderLayout.NORTH);p.add(field,BorderLayout.CENTER);return p;
     }
     public void refresh(){
         currentPage=0;

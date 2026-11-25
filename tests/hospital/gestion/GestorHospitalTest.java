@@ -25,6 +25,18 @@ class GestorHospitalTest {
         assertEquals("SALIDA", gestor.obtenerHistorial().get(1).getAccion());
         assertFalse(gestor.obtenerMatrizTexto().contains("(2, 2, 1)"));
     }
+    @Test void laSalidaRetiraAlPacienteYNoPermiteReasignarlo() {
+        GestorHospital gestor = new GestorHospital();
+        gestor.registrarPaciente(new Paciente("1001", "Ana", 25, 2, "Dolor"));
+        gestor.registrarPaciente(new Paciente("1002", "Luis", 31, 3, "Fiebre"));
+        gestor.asignarHabitacion("1001", 8);
+        gestor.darSalida("1001");
+        assertNull(gestor.buscarPaciente("1001"));
+        assertEquals(1, gestor.obtenerPacientes().size());
+        assertEquals("1002", gestor.obtenerPacientes().get(0).getIdentificacion());
+        assertThrows(IllegalArgumentException.class, () -> gestor.asignarHabitacion("1001", 9));
+        assertEquals("Ana", gestor.obtenerHistorial().get(1).getNombrePaciente());
+    }
     @Test void impideAsignarHabitacionOcupadaYSalidaRepetida() {
         GestorHospital gestor = new GestorHospital();
         gestor.registrarPaciente(new Paciente("1001", "Ana", 25, 2, "Dolor"));

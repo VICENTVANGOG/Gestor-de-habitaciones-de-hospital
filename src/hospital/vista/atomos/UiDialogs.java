@@ -3,17 +3,22 @@ package hospital.vista.atomos;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.util.function.BooleanSupplier;
 
 /** Diálogos modales redondeados para formularios, confirmaciones y avisos. */
 public final class UiDialogs {
     private UiDialogs() {}
     public static boolean confirm(Component parent,String title,String description,JComponent content) {
-        return show(parent,title,description,content,true,JOptionPane.QUESTION_MESSAGE);
+        return show(parent,title,description,content,true,JOptionPane.QUESTION_MESSAGE,()->true);
+    }
+    /** Igual que confirm, pero el diálogo solo se cierra al confirmar si canAccept devuelve true. */
+    public static boolean confirm(Component parent,String title,String description,JComponent content,BooleanSupplier canAccept) {
+        return show(parent,title,description,content,true,JOptionPane.QUESTION_MESSAGE,canAccept);
     }
     public static void message(Component parent,String title,String message,int type) {
-        show(parent,title,message,null,false,type);
+        show(parent,title,message,null,false,type,()->true);
     }
-    private static boolean show(Component parent,String title,String description,JComponent content,boolean confirm,int type) {
+    private static boolean show(Component parent,String title,String description,JComponent content,boolean confirm,int type,BooleanSupplier canAccept) {
         Window owner=SwingUtilities.getWindowAncestor(parent);
         JDialog dialog=new JDialog(owner,title,Dialog.ModalityType.APPLICATION_MODAL);
         dialog.setUndecorated(true);dialog.setBackground(new Color(0,0,0,0));dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -40,7 +45,7 @@ public final class UiDialogs {
         JPanel footer=new JPanel(new FlowLayout(FlowLayout.RIGHT,9,0));footer.setOpaque(false);footer.setBorder(new EmptyBorder(18,0,0,0));
         final boolean[] accepted={false};
         if(confirm){UiButton cancel=new UiButton("Cancelar",false);cancel.addActionListener(e->dialog.dispose());footer.add(cancel);}
-        UiButton action=new UiButton(confirm?"Confirmar":"Entendido",true);action.addActionListener(e->{accepted[0]=true;dialog.dispose();});footer.add(action);
+        UiButton action=new UiButton(confirm?"Confirmar":"Entendido",true);action.addActionListener(e->{if(!canAccept.getAsBoolean())return;accepted[0]=true;dialog.dispose();});footer.add(action);
         shell.add(footer,BorderLayout.SOUTH);dialog.setContentPane(shell);
         int width=content==null?410:Math.max(420,Math.min(560,content.getPreferredSize().width+52));
         int height=content==null?170:Math.max(250,Math.min(620,content.getPreferredSize().height+176));
