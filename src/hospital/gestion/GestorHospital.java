@@ -90,7 +90,9 @@ public class GestorHospital {
         historial.agregar(new RegistroHistorial(numero, paciente, "INGRESO"));
     }
 
-    // Registra la salida y deja libre la habitación y su posición en la matriz.
+    // Registra la salida, libera la habitación y su posición en la matriz y
+    // retira al paciente del directorio para que no se le pueda reasignar
+    // habitación. El historial conserva sus datos de ingreso y salida.
     public void darSalida(String identificacion) {
         Habitacion habitacion = buscarHabitacionActiva(identificacion);
         if (habitacion == null) {
@@ -103,6 +105,7 @@ public class GestorHospital {
                 habitacion.getNumero(), paciente, "SALIDA"));
         ocupacion.liberar(habitacion.getPiso(), habitacion.getPosicion());
         habitacion.liberar();
+        pacientes.eliminar(identificacion);
     }
 
     // Busca si el paciente ya está ocupando una habitación.
