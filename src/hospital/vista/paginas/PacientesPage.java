@@ -76,7 +76,6 @@ public class PacientesPage extends JPanel {
         add.addActionListener(e->register());
         search.getDocument().addDocumentListener(new javax.swing.event.DocumentListener(){
             private void filter(){
-                String q=search.getText().trim();
                 currentPage=0;
                 rebuildFilteredPatients();
             }
